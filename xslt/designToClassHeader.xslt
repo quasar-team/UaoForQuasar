@@ -33,6 +33,16 @@ public:
   </xsl:if>
 </xsl:for-each>
 
+<xsl:for-each select="d:sourcevariable">
+	<xsl:if test="@addressSpaceRead!='forbidden'">
+		<xsl:value-of select="@dataType"/><xsl:text> </xsl:text>read<xsl:value-of select="fnc:capFirst(@name)"/> (UaStatus *out_status=0);
+	</xsl:if>
+
+  	<xsl:if test="@addressSpaceWrite!='forbidden'">
+  		void write<xsl:value-of select="fnc:capFirst(@name)"/> (<xsl:value-of select="@dataType"/> &amp; data);
+  	</xsl:if>
+</xsl:for-each>
+
 <xsl:for-each select="d:method">
   void <xsl:value-of select="@name"/>(
     	<xsl:for-each select="d:argument">
