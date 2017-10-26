@@ -22,7 +22,9 @@ Requirements:
 - the generated client depends on the UASDK API for OPC-UA clients
 It's best to use the UASDK, of course:
 https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
-and there is an evaluation version which might help you to see if it satisfies your needs.
+
+If you don't have the paid UASDK license, we tested this project with the evaluation license,
+which can help you see if the overall solution is satisfactory for you.
 
 
 --- How does it work ---
@@ -45,5 +47,13 @@ The client class header and body will be places into UaForQuasar/output
 
 4. At this stage you can use your client class. 
 Please look into demo/ directory where a simple, CMake-based project which integrated generated classes
-in some simple demo client.
+in some simple demo client. To compile it, go to build and then:
+
+cmake ../
+
+make
+
+Note that you might need to adjust demo.cpp according to the quasar class you want to talk to.
+Note that you might need to adjust CMakeLists.txt for the UASDK paths etc.
+
 
