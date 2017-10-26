@@ -1,5 +1,7 @@
 This is Uao (UA Objects), for C++ clients and for Quasar-based OPC-UA servers
 
+Author: Piotr Nikiel <piotr.nikiel@gmail.com>
+
 --- UA Objects ---
 
 UA Objects is an approach to create OPC-UA client(s) using a'priori information of 
@@ -32,6 +34,7 @@ Quasar reference: https://github.com/quasar-team/quasar
 2. Add this project as a git submodule to your OPC-UA server:
 
 git submodule add https://github.com/quasar-team/UaoForQuasar.git
+
 git submodule update
 
 3. Generate a client class per Quasar class, e.g. for Quasar class "MyClass" (defined in quasar's Design.xml):
@@ -43,3 +46,4 @@ The client class header and body will be places into UaForQuasar/output
 4. At this stage you can use your client class. 
 Please look into demo/ directory where a simple, CMake-based project which integrated generated classes
 in some simple demo client.
+
