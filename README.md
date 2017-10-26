@@ -24,6 +24,22 @@ and there is an evaluation version which might help you to see if it satisfies y
 
 
 --- How does it work ---
-1. You start with a quasar-based OPC-UA server
 
-https://github.com/quasar-team/quasar
+1. You always start with a quasar-based OPC-UA server project.
+Create a quasar project, or use an existing one.
+Quasar reference: https://github.com/quasar-team/quasar
+
+2. Add this project as a git submodule to your OPC-UA server:
+
+git submodule add https://github.com/quasar-team/UaoForQuasar.git
+git submodule update
+
+3. Generate a client class per Quasar class, e.g. for Quasar class "MyClass" (defined in quasar's Design.xml):
+
+python UaoForQuasar/generateClass.py MyClass
+
+The client class header and body will be places into UaForQuasar/output
+
+4. At this stage you can use your client class. 
+Please look into demo/ directory where a simple, CMake-based project which integrated generated classes
+in some simple demo client.
