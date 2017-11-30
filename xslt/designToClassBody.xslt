@@ -17,7 +17,10 @@
 	<xsl:template name="readInvocation">
 	<xsl:param name="variableName"/>
 	<xsl:param name="dataType"/>
-	<xsl:value-of select="$dataType"/><xsl:text> </xsl:text> <xsl:value-of select="$className"/>::read<xsl:value-of select="fnc:capFirst($variableName)"/> (UaStatus *out_status)
+	<xsl:value-of select="$dataType"/><xsl:text> </xsl:text> <xsl:value-of select="$className"/>::read<xsl:value-of select="fnc:capFirst($variableName)"/> (
+	UaStatus *out_status,
+	UaDateTime *sourceTimeStamp,
+    UaDateTime *serverTimeStamp)
 	  {
 	  
 	    ServiceSettings   ss;
@@ -25,7 +28,7 @@
 	    UaDataValues      dataValues;
 	    UaDiagnosticInfos diagnosticInfos;
 	    
-	    UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="$variableName"/>"), 2  );
+	    UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="$variableName"/>"), m_objId.namespaceIndex() );
 	   
 	    nodesToRead.create(1);
 	    nodeId.copyTo( &amp;nodesToRead[0].NodeId );
@@ -42,7 +45,7 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw std::runtime_error("OPC-UA read failed");
+	  	   throw std::runtime_error(std::string("OPC-UA read failed:")+status.toString().toUtf8());
 	  	if (! UaStatus(dataValues[0].StatusCode).isGood())
 	  	{
 	  		if (out_status)
@@ -52,6 +55,9 @@
 	  	}
 	  	<xsl:value-of select="$dataType"/> out;
 	  	(UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
+	  	if (sourceTimeStamp)
+        	*sourceTimeStamp = dataValues[0].SourceTimestamp;
+	  	
 	  	return out;
 	    }
 	
@@ -201,6 +207,8 @@
 	</xsl:template>
 	
 	<xsl:template match="/">	
+	
+	// generated: <xsl:value-of select="current-dateTime()"/>
 
 	#include &lt;iostream&gt;
 	#include &lt;<xsl:value-of select="$className"/>.h&gt;

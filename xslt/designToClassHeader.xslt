@@ -27,7 +27,10 @@ public:
 
 // getters, setters for all variables
 <xsl:for-each select="d:cachevariable">
-  <xsl:value-of select="@dataType"/><xsl:text> </xsl:text>read<xsl:value-of select="fnc:capFirst(@name)"/> (UaStatus *out_status=0);
+  <xsl:value-of select="@dataType"/><xsl:text> </xsl:text>read<xsl:value-of select="fnc:capFirst(@name)"/> (
+  	UaStatus      *out_status=nullptr,
+  	UaDateTime    *sourceTimeStamp=nullptr,
+    UaDateTime    *serverTimeStamp=nullptr);
   <xsl:if test="@addressSpaceWrite!='forbidden'">
   void write<xsl:value-of select="fnc:capFirst(@name)"/> (<xsl:value-of select="@dataType"/> &amp; data);
   </xsl:if>
@@ -35,7 +38,10 @@ public:
 
 <xsl:for-each select="d:sourcevariable">
 	<xsl:if test="@addressSpaceRead!='forbidden'">
-		<xsl:value-of select="@dataType"/><xsl:text> </xsl:text>read<xsl:value-of select="fnc:capFirst(@name)"/> (UaStatus *out_status=0);
+		<xsl:value-of select="@dataType"/><xsl:text> </xsl:text>read<xsl:value-of select="fnc:capFirst(@name)"/> (
+		UaStatus     *out_status=nullptr,
+		UaDateTime   *sourceTimeStamp=nullptr,
+        UaDateTime   *serverTimeStamp=nullptr);
 	</xsl:if>
 
   	<xsl:if test="@addressSpaceWrite!='forbidden'">
@@ -66,6 +72,8 @@ private:
 	</xsl:template>
 	
 	<xsl:template match="/">	
+	
+	// generated: <xsl:value-of select="current-dateTime()"/>
 
 	#include &lt;iostream&gt;
     #include &lt;uaclient/uaclientsdk.h&gt;
