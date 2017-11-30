@@ -32,7 +32,9 @@ public:
   	UaDateTime    *sourceTimeStamp=nullptr,
     UaDateTime    *serverTimeStamp=nullptr);
   <xsl:if test="@addressSpaceWrite!='forbidden'">
-  void write<xsl:value-of select="fnc:capFirst(@name)"/> (<xsl:value-of select="@dataType"/> &amp; data);
+  void write<xsl:value-of select="fnc:capFirst(@name)"/> (
+  	<xsl:value-of select="@dataType"/> &amp; data,
+  	UaStatus                                 *out_status=nullptr);
   </xsl:if>
 </xsl:for-each>
 
@@ -45,7 +47,9 @@ public:
 	</xsl:if>
 
   	<xsl:if test="@addressSpaceWrite!='forbidden'">
-  		void write<xsl:value-of select="fnc:capFirst(@name)"/> (<xsl:value-of select="@dataType"/> &amp; data);
+  		void write<xsl:value-of select="fnc:capFirst(@name)"/> (
+  		<xsl:value-of select="@dataType"/> &amp; data,
+  	    UaStatus                                 *out_status=nullptr);
   	</xsl:if>
 </xsl:for-each>
 

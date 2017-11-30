@@ -66,7 +66,9 @@
 	<xsl:template name="writeInvocation">
 		<xsl:param name="variableName"/>
 		<xsl:param name="dataType"/>
-		void  <xsl:value-of select="$className"/>::write<xsl:value-of select="fnc:capFirst($variableName)"/> (<xsl:value-of select="$dataType"/> &amp; data)
+		void  <xsl:value-of select="$className"/>::write<xsl:value-of select="fnc:capFirst($variableName)"/> (
+			<xsl:value-of select="$dataType"/> &amp; data,
+			UaStatus                                 *out_status)
 	    {
 	  	ServiceSettings   ss;
 	    UaWriteValues    nodesToWrite;
@@ -74,7 +76,7 @@
 	    UaDiagnosticInfos diagnosticInfos;
 	    UaStatusCodeArray results;
 	   	        
-	    UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="$variableName"/>"), 2  );
+	    UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="$variableName"/>"), m_objId.namespaceIndex()  );
 	   
 	    nodesToWrite.create(1);
 	    nodeId.copyTo( &amp;nodesToWrite[0].NodeId );
@@ -94,10 +96,17 @@
 			results,
 			diagnosticInfos
 	  	);
-	  	if (status.isBad())
-	  	   throw std::runtime_error(std::string("OPC-UA write failed:") + status.toString().toUtf8() );
-	  	if (results[0] != OpcUa_Good)
-	  		throw std::runtime_error(std::string("OPC-UA write failed for "+std::string(nodeId.toString().toUtf8())+": one of results not good: ") + UaStatus(results[0]).toString().toUtf8() );
+	  	if (out_status)
+	  	{
+	  		*out_status = status;
+	  	}
+	  	else
+	  	{
+		  	if (status.isBad())
+		  	   throw std::runtime_error(std::string("OPC-UA write failed:") + status.toString().toUtf8() );
+		  	if (results[0] != OpcUa_Good)
+		  		throw std::runtime_error(std::string("OPC-UA write failed for "+std::string(nodeId.toString().toUtf8())+": one of results not good: ") + UaStatus(results[0]).toString().toUtf8() );
+	  	}
 	
 	    }	
 	</xsl:template>
