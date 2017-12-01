@@ -7,8 +7,8 @@ sys.path.insert(0, 'FrameworkInternals')
 from transformDesign import transformDesign
 
 def runGenerator(className,uaoDirectory='UaoForQuasar'):
-    output_header = os.path.join('UaoForQuasar','generated','{0}.h'.format(className))
-    output_body = os.path.join('UaoForQuasar','generated','{0}.cpp'.format(className))
+    output_header = os.path.join(uaoDirectory,'generated','{0}.h'.format(className))
+    output_body = os.path.join(uaoDirectory,'generated','{0}.cpp'.format(className))
     additionalParam='className={0}'.format(className)
     transformDesign(
         xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassHeader.xslt'), 
