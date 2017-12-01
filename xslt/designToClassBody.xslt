@@ -54,7 +54,14 @@
 	  			throw std::runtime_error(std::string("OPC-UA read: variable status is not good") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );
 	  	}
 	  	<xsl:value-of select="$dataType"/> out;
-	  	(UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
+	  	<xsl:choose>
+	  	<xsl:when test="$dataType = 'UaString'">
+	  		out = dataValues[0].Value.toString();
+	  	</xsl:when>
+	  	<xsl:otherwise>
+	  		(UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
+	  	</xsl:otherwise>
+	  	</xsl:choose>
 	  	if (sourceTimeStamp)
         	*sourceTimeStamp = dataValues[0].SourceTimestamp;
 	  	
