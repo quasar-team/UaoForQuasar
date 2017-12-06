@@ -46,13 +46,14 @@
 	  	);
 	  	if (status.isBad())
 	  	   throw std::runtime_error(std::string("OPC-UA read failed:")+status.toString().toUtf8());
-	  	if (! UaStatus(dataValues[0].StatusCode).isGood())
-	  	{
-	  		if (out_status)
-	  			*out_status = dataValues[0].StatusCode;
-	  		else
-	  			throw std::runtime_error(std::string("OPC-UA read: variable status is not good") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );
-	  	}
+	    if (out_status)
+	       *out_status = dataValues[0].StatusCode;
+	    else
+	    {
+	        if (! UaStatus(dataValues[0].StatusCode).isGood())
+	        	throw std::runtime_error(std::string("OPC-UA read: variable status is not good") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );	
+	    }   
+	  	
 	  	<xsl:value-of select="$dataType"/> out;
 	  	<xsl:choose>
 	  	<xsl:when test="$dataType = 'UaString'">
@@ -64,6 +65,8 @@
 	  	</xsl:choose>
 	  	if (sourceTimeStamp)
         	*sourceTimeStamp = dataValues[0].SourceTimestamp;
+        if (serverTimeStamp)
+            *serverTimeStamp = dataValues[0].ServerTimestamp;
 	  	
 	  	return out;
 	    }
