@@ -252,6 +252,7 @@
 	#include &lt;<xsl:value-of select="$className"/>.h&gt;
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
+	#include &lt;ArrayTools.h&gt;
 	
 	<xsl:if test="not(/d:design/d:class[@name=$className])">
 		<xsl:message terminate="yes">Class not found.</xsl:message>
