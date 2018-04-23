@@ -253,6 +253,8 @@
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
 	#include &lt;ArrayTools.h&gt;
+
+	using namespace UaoClientForOpcUaSca;
 	
 	<xsl:if test="not(/d:design/d:class[@name=$className])">
 		<xsl:message terminate="yes">Class not found.</xsl:message>
