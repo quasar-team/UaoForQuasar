@@ -169,7 +169,7 @@
 <xsl:for-each select="d:method">
   void <xsl:value-of select="$className"/>::<xsl:value-of select="@name"/> (
   	<xsl:for-each select="d:argument">
-  		<xsl:value-of select="fnc:fixDataTypePassingMethod(@dataType,d:array)"/> &amp; in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
+  		<xsl:value-of select="fnc:fixDataTypePassingMethod(@dataType,d:array)"/> in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
   		
   	</xsl:for-each>
     
