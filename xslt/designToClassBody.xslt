@@ -169,11 +169,12 @@
 <xsl:for-each select="d:method">
   void <xsl:value-of select="$className"/>::<xsl:value-of select="@name"/> (
   	<xsl:for-each select="d:argument">
-  		<xsl:value-of select="@dataType"/> &amp; in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
+  		<xsl:value-of select="fnc:fixDataTypePassingMethod(@dataType,d:array)"/> &amp; in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
   		
   	</xsl:for-each>
+    
   	<xsl:for-each select="d:returnvalue">
-  		<xsl:value-of select="@dataType"/> &amp; in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:returnvalue)">,</xsl:if>
+  		<xsl:value-of select="fnc:quasarDataTypeToCppType(@dataType,d:array)"/> &amp; out_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:returnvalue)">,</xsl:if>
   	</xsl:for-each>
   )
   {
@@ -189,16 +190,26 @@
   	UaVariant v;
   	
   	<xsl:if test="d:argument">
-  	callRequest.inputArguments.create( <xsl:value-of select="count(d:argument)"/> );
-	  	<xsl:for-each select="d:argument">
-	  	<xsl:choose>
-	  		<xsl:when test="@dataType='UaByteString'">
-	  			v.setByteString( in_<xsl:value-of select="@name"/>, false );
-	  		</xsl:when>
-	  		<xsl:otherwise>
-	  			<xsl:message terminate="yes">not-implememnted</xsl:message>
-	  		</xsl:otherwise>
-	  	</xsl:choose>
+  	    callRequest.inputArguments.create( <xsl:value-of select="count(d:argument)"/> );
+        <xsl:for-each select="d:argument"> 
+            <xsl:choose>
+            <xsl:when test="d:array">
+                <xsl:variable name="input">in_<xsl:value-of select="@name"/></xsl:variable>
+                <xsl:value-of select="fnc:convertVectorToUaVariant($input,'v',@dataType)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="@dataType='UaByteString'">
+                        v.setByteString( in_<xsl:value-of select="@name"/>, false );
+                    </xsl:when>
+                    <xsl:otherwise>
+                        v.<xsl:value-of select="fnc:dataTypeToVariantSetter(@dataType)"/>( in_<xsl:value-of select="@name"/> );
+                    </xsl:otherwise>
+                </xsl:choose>    
+            </xsl:otherwise>
+            </xsl:choose>
+	  	
+
 	  	v.copyTo( &amp;callRequest.inputArguments[ <xsl:value-of select="position()-1"/> ] );
 	  	</xsl:for-each>
   	</xsl:if>
@@ -214,8 +225,16 @@
   		throw std::runtime_error(std::string("bad-status: ")+status.toString().toUtf8());
   	
   	<xsl:for-each select="d:returnvalue">
-	   	v = co.outputArguments[<xsl:value-of select="position()-1"/>];
- 	 	v.toByteString(in_<xsl:value-of select="@name"/>); 	
+        v = co.outputArguments[<xsl:value-of select="position()-1"/>];
+        <xsl:choose>
+            <xsl:when test="d:array">
+                <xsl:variable name="output">out_<xsl:value-of select="@name"/></xsl:variable>
+                <xsl:value-of select="fnc:convertUaVariantToVector('v',$output,@dataType)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                v.<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (v.toByteString(out_<xsl:value-of select="@name"/>););
+            </xsl:otherwise>
+        </xsl:choose> 	 	
   	</xsl:for-each>	
 
   
