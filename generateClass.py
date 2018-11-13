@@ -13,14 +13,14 @@ def runGenerator(className,uaoDirectory='UaoForQuasar'):
     transformDesign(
         xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassHeader.xslt'), 
         outputFile=output_header, 
-        overwriteProtection=0, 
+        requiresMerge=False, 
         astyleRun=True, 
         additionalParam=additionalParam)
 
     transformDesign(
         xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassBody.xslt'), 
         outputFile=output_body, 
-        overwriteProtection=0, 
+        requiresMerge=False, 
         astyleRun=True, 
         additionalParam=additionalParam)
     
