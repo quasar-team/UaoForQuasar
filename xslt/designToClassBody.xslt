@@ -248,8 +248,6 @@
 	
 	// generated: <xsl:value-of select="current-dateTime()"/>
 
-    namespace <xsl:value-of select="$namespace"/>
-    {
 
 	
 	#include &lt;iostream&gt;
@@ -257,6 +255,10 @@
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
 	#include &lt;<xsl:value-of select="$namespace"/>ArrayTools.h&gt;
+
+    namespace <xsl:value-of select="$namespace"/>
+    {
+
 	
 	<xsl:if test="not(/d:design/d:class[@name=$className])">
 		<xsl:message terminate="yes">Class not found.</xsl:message>
