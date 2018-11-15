@@ -10,7 +10,8 @@ xsi:schemaLocation="http://www.w3.org/1999/XSL/Transform schema-for-xslt20.xsd "
 	<xsl:include href="../../Design/CommonFunctions.xslt" />
 	<xsl:output method="text"></xsl:output>
 	 <xsl:param name="className"/>
-	 	<xsl:param name="xsltFileName"/>
+	 <xsl:param name="xsltFileName"/>
+	 <xsl:param name="namespace"/>
 
 	
 	<xsl:template name="classBody">
@@ -81,6 +82,9 @@ private:
 
 	#include &lt;iostream&gt;
     #include &lt;uaclient/uaclientsdk.h&gt;
+
+    namespace <xsl:value-of select="$namespace"/>
+    {
     
     using namespace UaClientSdk;
 	
@@ -90,7 +94,10 @@ private:
 	<xsl:for-each select="/d:design/d:class[@name=$className]">
 	<xsl:call-template name="classBody"/>
 	</xsl:for-each>
-	</xsl:template>
+
+    }
+
+    </xsl:template>
 
 
 

@@ -12,7 +12,7 @@
 	<xsl:output method="text"></xsl:output>
 	<xsl:param name="className"/>
 	<xsl:param name="xsltFileName"/>
-
+	 <xsl:param name="namespace"/>
 
 	<xsl:template name="readInvocation">
 	<xsl:param name="variableName"/>
@@ -248,11 +248,15 @@
 	
 	// generated: <xsl:value-of select="current-dateTime()"/>
 
+    namespace <xsl:value-of select="$namespace"/>
+    {
+
+	
 	#include &lt;iostream&gt;
 	#include &lt;<xsl:value-of select="$className"/>.h&gt;
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
-	#include &lt;ArrayTools.h&gt;
+	#include &lt;<xsl:value-of select="$namespace"/>ArrayTools.h&gt;
 	
 	<xsl:if test="not(/d:design/d:class[@name=$className])">
 		<xsl:message terminate="yes">Class not found.</xsl:message>
@@ -260,8 +264,14 @@
 	<xsl:for-each select="/d:design/d:class[@name=$className]">
 	<xsl:call-template name="classBody"/>
 	</xsl:for-each>
+
+	}
+
+
 	</xsl:template>
 
+
+	
 
 
 </xsl:transform>
