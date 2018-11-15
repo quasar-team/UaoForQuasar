@@ -232,7 +232,7 @@
                 <xsl:value-of select="fnc:convertUaVariantToVector('v',$output,@dataType)"/>
             </xsl:when>
             <xsl:otherwise>
-                v.<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (v.toByteString(out_<xsl:value-of select="@name"/>););
+                v.<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out_<xsl:value-of select="@name"/>);
             </xsl:otherwise>
         </xsl:choose> 	 	
   	</xsl:for-each>	
