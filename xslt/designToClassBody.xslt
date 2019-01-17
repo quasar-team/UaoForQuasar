@@ -55,14 +55,20 @@
 	    }   
 	  	
 	  	<xsl:value-of select="$dataType"/> out;
+        
 	  	<xsl:choose>
 	  	<xsl:when test="$dataType = 'UaString'">
 	  		out = dataValues[0].Value.toString();
 	  	</xsl:when>
 	  	<xsl:otherwise>
-	  		(UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
+  		UaStatus conversionStatus = (UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
+        if (! conversionStatus.isGood())
+        {
+                throw std::runtime_error(std::string("OPC-UA read: read succeeded but conversion to native type failed (was it NULL value?): ") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );
+        }
 	  	</xsl:otherwise>
 	  	</xsl:choose>
+        
 	  	if (sourceTimeStamp)
         	*sourceTimeStamp = dataValues[0].SourceTimestamp;
         if (serverTimeStamp)
