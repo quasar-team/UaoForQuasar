@@ -45,7 +45,7 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw std::runtime_error(std::string("OPC-UA read failed:")+status.toString().toUtf8());
+	  	   throw BadStatusCode("OPC-UA read failed", status);
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
@@ -228,7 +228,7 @@
   			co
   		);
   	if (status.isBad())
-  		throw std::runtime_error(std::string("bad-status: ")+status.toString().toUtf8());
+  		throw BadStatusCode("In OPC-UA call", status);
   	
   	<xsl:for-each select="d:returnvalue">
         v = co.outputArguments[<xsl:value-of select="position()-1"/>];
@@ -261,6 +261,7 @@
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
 	#include &lt;<xsl:value-of select="$namespace"/>ArrayTools.h&gt;
+    #include &lt;<xsl:value-of select="$namespace"/>UaoExceptions.h&gt;
 
     namespace <xsl:value-of select="$namespace"/>
     {
