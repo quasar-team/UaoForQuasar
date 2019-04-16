@@ -45,7 +45,7 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw BadStatusCode("OPC-UA read failed", status);
+	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status);
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
@@ -228,7 +228,7 @@
   			co
   		);
   	if (status.isBad())
-  		throw BadStatusCode("In OPC-UA call", status);
+  		throw Exceptions::BadStatusCode("In OPC-UA call", status);
   	
   	<xsl:for-each select="d:returnvalue">
         v = co.outputArguments[<xsl:value-of select="position()-1"/>];
