@@ -20,12 +20,9 @@ namespace Exceptions
 class BadStatusCode: public std::runtime_error
 {
     public:
-    BadStatusCode (const std::string& what, OpcUa_StatusCode statusCode):
-        std::runtime_error(what),
-        m_statusCode(statusCode) {}
+    BadStatusCode (const std::string& what, OpcUa_StatusCode statusCode);
 
     OpcUa_StatusCode statusCode() const { return m_statusCode; }
-    std::string what() const;
 
     private:
     OpcUa_StatusCode m_statusCode;
