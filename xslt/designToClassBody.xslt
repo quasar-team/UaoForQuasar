@@ -252,10 +252,6 @@
 	
 	<xsl:template match="/">	
 	
-	// generated: <xsl:value-of select="current-dateTime()"/>
-
-
-	
 	#include &lt;iostream&gt;
 	#include &lt;<xsl:value-of select="$className"/>.h&gt;
 	#include &lt;uaclient/uasession.h&gt;

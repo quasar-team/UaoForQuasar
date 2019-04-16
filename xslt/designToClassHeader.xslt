@@ -78,8 +78,6 @@ private:
 	
 	<xsl:template match="/">	
 	
-	// generated: <xsl:value-of select="current-dateTime()"/>
-
 	#include &lt;iostream&gt;
     #include &lt;uaclient/uaclientsdk.h&gt;
 
