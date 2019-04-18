@@ -45,13 +45,13 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw std::runtime_error(std::string("OPC-UA read failed:")+status.toString().toUtf8());
+	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status);
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
 	    {
 	        if (! UaStatus(dataValues[0].StatusCode).isGood())
-	        	throw std::runtime_error(std::string("OPC-UA read: variable status is not good") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );	
+	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );	
 	    }   
 	  	
 	  	<xsl:value-of select="$dataType"/> out;
@@ -119,9 +119,9 @@
 	  	else
 	  	{
 		  	if (status.isBad())
-		  	   throw std::runtime_error(std::string("OPC-UA write failed:") + status.toString().toUtf8() );
+		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status );
 		  	if (results[0] != OpcUa_Good)
-		  		throw std::runtime_error(std::string("OPC-UA write failed for "+std::string(nodeId.toString().toUtf8())+": one of results not good: ") + UaStatus(results[0]).toString().toUtf8() );
+		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
 	  	}
 	
 	    }	
@@ -228,7 +228,7 @@
   			co
   		);
   	if (status.isBad())
-  		throw std::runtime_error(std::string("bad-status: ")+status.toString().toUtf8());
+  		throw Exceptions::BadStatusCode("In OPC-UA call", status);
   	
   	<xsl:for-each select="d:returnvalue">
         v = co.outputArguments[<xsl:value-of select="position()-1"/>];
@@ -257,6 +257,7 @@
 	#include &lt;uaclient/uasession.h&gt;
 	#include &lt;stdexcept&gt;
 	#include &lt;<xsl:value-of select="$namespace"/>ArrayTools.h&gt;
+    #include &lt;<xsl:value-of select="$namespace"/>UaoExceptions.h&gt;
 
     namespace <xsl:value-of select="$namespace"/>
     {
