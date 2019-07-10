@@ -45,7 +45,7 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status);
+	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
@@ -119,7 +119,7 @@
 	  	else
 	  	{
 		  	if (status.isBad())
-		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status );
+		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
 		  	if (results[0] != OpcUa_Good)
 		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
 	  	}
@@ -228,7 +228,7 @@
   			co
   		);
   	if (status.isBad())
-  		throw Exceptions::BadStatusCode("In OPC-UA call", status);
+  		throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
   	
   	<xsl:for-each select="d:returnvalue">
         v = co.outputArguments[<xsl:value-of select="position()-1"/>];
