@@ -58,7 +58,7 @@
         
 	  	<xsl:choose>
 	  	<xsl:when test="$dataType = 'UaString'">
-	  		out = dataValues[0].Value.toString();
+	  		out = UaVariant(dataValues[0].Value).toString();
 	  	</xsl:when>
 	  	<xsl:otherwise>
   		UaStatus conversionStatus = (UaVariant(dataValues[0].Value)).<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out);
