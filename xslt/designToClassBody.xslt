@@ -206,7 +206,7 @@
             <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="@dataType='UaByteString'">
-                        v.setByteString( in_<xsl:value-of select="@name"/>, false );
+                        v.setByteString( const_cast&lt;UaByteString&amp;&gt;(in_<xsl:value-of select="@name"/>), false );
                     </xsl:when>
                     <xsl:otherwise>
                         v.<xsl:value-of select="fnc:dataTypeToVariantSetter(@dataType)"/>( in_<xsl:value-of select="@name"/> );
