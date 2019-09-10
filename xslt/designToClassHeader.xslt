@@ -76,7 +76,10 @@ private:
 
 	</xsl:template>
 	
-	<xsl:template match="/">	
+	<xsl:template match="/">
+	  <xsl:variable name="IncludeGuardId">__UAO__<xsl:value-of select="$namespace"/>__<xsl:value-of select="$classname"/>__</xsl:variable>
+	  #ifndef <xsl:value-of select="$IncludeGuardId"/>
+	  #define <xsl:value-of select="$IncludeGuardId"/>
 	
 	#include &lt;iostream&gt;
     #include &lt;uaclient/uaclientsdk.h&gt;
@@ -93,7 +96,9 @@ private:
 	<xsl:call-template name="classBody"/>
 	</xsl:for-each>
 
-    }
+	}
+
+	#endif <xsl:value-of select="$IncludeGuardId"/>
 
     </xsl:template>
 
