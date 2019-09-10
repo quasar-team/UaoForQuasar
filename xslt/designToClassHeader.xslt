@@ -77,7 +77,7 @@ private:
 	</xsl:template>
 	
 	<xsl:template match="/">
-	  <xsl:variable name="IncludeGuardId">__UAO__<xsl:value-of select="$namespace"/>__<xsl:value-of select="$classname"/>__</xsl:variable>
+	  <xsl:variable name="IncludeGuardId">__UAO__<xsl:value-of select="$namespace"/>__<xsl:value-of select="$className"/>__</xsl:variable>
 	  #ifndef <xsl:value-of select="$IncludeGuardId"/>
 	  #define <xsl:value-of select="$IncludeGuardId"/>
 	
