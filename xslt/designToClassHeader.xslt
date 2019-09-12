@@ -98,7 +98,7 @@ private:
 
 	}
 
-	#endif <xsl:value-of select="$IncludeGuardId"/>
+	#endif // <xsl:value-of select="$IncludeGuardId"/>
 
     </xsl:template>
 
