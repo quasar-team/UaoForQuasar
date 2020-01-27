@@ -28,7 +28,7 @@ UaClientSdk::UaSession* ClientSessionFactory::connect(const UaString& sUrl)
         sUrl,                // URL of the Endpoint - from discovery or config
         sessionConnectInfo,  // General settings for connection
         security, // Security settings
-        new MyCallBack () );        // Callback interface
+        nullptr );        // Callback interface
 
     /*********************************************************************/
     if ( status.isBad() )
