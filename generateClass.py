@@ -11,21 +11,38 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
     output_header = os.path.join(uaoDirectory,'generated','{0}.h'.format(className))
     output_body = os.path.join(uaoDirectory,'generated','{0}.cpp'.format(className))
 
+    output_header_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.h'.format(className))
+    output_body_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.cpp'.format(className))
+
     additionalParam = {}
         'className' : className, 
         'namespace' : namespace}
 
     try:
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassHeader.jinja'),
+            xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassHeader.xslt'), 
             outputFile=output_header, 
             requiresMerge=False, 
             astyleRun=True, 
             additionalParam=additionalParam)
 
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassBody.jinja'),
+            xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassBody.xslt'), 
             outputFile=output_body, 
+            requiresMerge=False, 
+            astyleRun=True, 
+            additionalParam=additionalParam)
+
+        transformDesign(
+            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassHeader.jinja'),
+            outputFile=output_header_jinja, 
+            requiresMerge=False, 
+            astyleRun=True, 
+            additionalParam=additionalParam)
+
+        transformDesign(
+            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassBody.jinja'),
+            outputFile=output_body_jinja, 
             requiresMerge=False, 
             astyleRun=True, 
             additionalParam=additionalParam)
