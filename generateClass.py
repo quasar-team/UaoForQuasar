@@ -12,9 +12,8 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
     output_body = os.path.join(uaoDirectory,'generated','{0}.cpp'.format(className))
 
     output_header_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.h'.format(className))
-    output_body_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.cpp'.format(className))
 
-    additionalParam = {}
+    additionalParam = {
         'className' : className, 
         'namespace' : namespace}
 
@@ -40,12 +39,6 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
             astyleRun=True, 
             additionalParam=additionalParam)
 
-        transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassBody.jinja'),
-            outputFile=output_body_jinja, 
-            requiresMerge=False, 
-            astyleRun=True, 
-            additionalParam=additionalParam)
     except:
         quasar_basic_utils.quasaric_exception_handler()
     
