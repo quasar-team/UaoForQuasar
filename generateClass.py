@@ -11,7 +11,9 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
     output_header = os.path.join(uaoDirectory,'generated','{0}.h'.format(className))
     output_body = os.path.join(uaoDirectory,'generated','{0}.cpp'.format(className))
 
-    output_header_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.h'.format(className))
+    # Those 2 are here only for debugging and backwards compatibility. 
+    output_body_jinja = os.path.join(uaoDirectory,'generated','{0}_jinja.cpp'.format(className))
+    output_header_xslt = os.path.join(uaoDirectory,'generated','{0}_xslt.h'.format(className))
 
     additionalParam = {
         'className' : className, 
@@ -19,8 +21,15 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
 
     try:
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassHeader.xslt'), 
+            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassHeader.jinja'),
             outputFile=output_header, 
+            requiresMerge=False, 
+            astyleRun=True, 
+            additionalParam=additionalParam)
+
+        transformDesign(
+            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassBody.jinja'),
+            outputFile=output_body_jinja, 
             requiresMerge=False, 
             astyleRun=True, 
             additionalParam=additionalParam)
@@ -33,8 +42,8 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient'):
             additionalParam=additionalParam)
 
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, 'templates', 'designToClassHeader.jinja'),
-            outputFile=output_header_jinja, 
+            xsltTransformation=os.path.join(uaoDirectory, 'xslt', 'designToClassHeader.xslt'), 
+            outputFile=output_header_xslt, 
             requiresMerge=False, 
             astyleRun=True, 
             additionalParam=additionalParam)

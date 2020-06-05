@@ -26,25 +26,29 @@ public:
 // getters, setters for all variables
 {% for cv in designInspector.objectify_cache_variables(className) %}
 {{cv.get('dataType')}} read{{cv.get('name')|capFirst}} (
-	UaStatus      *out_status=nullptr,
-  	UaDateTime    *sourceTimeStamp=nullptr,
-    UaDateTime    *serverTimeStamp=nullptr);
-{% endfor %}
+		UaStatus      *out_status=nullptr,
+  		UaDateTime    *sourceTimeStamp=nullptr,
+   		UaDateTime    *serverTimeStamp=nullptr);
+	{% if cv.get('addressSpaceWrite') != 'forbidden' %}
 
+		void write{{cv.get('name')|capFirst}} (
+		{{cv.get('dataType')}}& data,
+		UaStatus *out_status=nullptr);
+	{% endif %}
+{% endfor %}
 {% for sv in this.sourcevariable %}
-	{% if sv.get('addressSpaceRead') == 'asynchronous' or sv.get('addressSpaceRead') == 'synchronous' %}
-    	/* {{sv.get('addressSpaceRead')|upper}} !! */
-    	UaStatus read{{sv.get('name')|capFirst}} (
-    	{{sv.get('dataType')}}& value,
-        UaDateTime& sourceTime
-    	);
+	{% if sv.get('addressSpaceRead') != 'forbidden' %}
+    	{{sv.get('dataType')}} read{{sv.get('name')|capFirst}} (
+		UaStatus     *out_status=nullptr,
+		UaDateTime   *sourceTimeStamp=nullptr,
+        UaDateTime   *serverTimeStamp=nullptr);
     {% endif %}
-    {% if sv.get('addressSpaceWrite') == 'asynchronous' or sv.get('addressSpaceWrite') == 'synchronous' %}
-    	/* {{sv.get('addressSpaceWrite')|upper}} !! */
-    	UaStatus write{{sv.get('name')|capFirst}} (
-		{{sv.get('dataType')}}& value
-		);
-    {% endif %}
+	{% if sv.get('addressSpaceWrite') != 'forbidden' %}
+
+		void write{{sv.get('name')|capFirst}} (
+		{{sv.get('dataType')}}& data,
+		UaStatus *out_status=nullptr);
+	{% endif %}
 {% endfor %}
 
 {% for m in this.method %}
