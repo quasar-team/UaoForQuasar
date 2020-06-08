@@ -106,7 +106,7 @@ class Delphi():
         output += "nodesToWrite.create(1);\n"
         output += "nodeId.copyTo( &nodesToWrite[0].NodeId );\n"
         output += "nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;\n\n"
-        output += "UaVariant v ( data );\n"
+        output += "UaVariant v ( data );\n\n"
         if dataType == 'UaByteString':
             output += "v.setByteString( data, false );\n"
         output += "\n\n"
