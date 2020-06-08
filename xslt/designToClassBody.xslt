@@ -9,19 +9,21 @@
 	xmlns:fnc="http://cern.ch/quasar/MyFunctions"
 	xsi:schemaLocation="http://www.w3.org/1999/XSL/Transform schema-for-xslt20.xsd ">
 	<xsl:include href="../../Design/CommonFunctions.xslt" />
+
+	<!-- ========================================== -->
 	<xsl:output method="text"></xsl:output>
 	<xsl:param name="className"/>
 	<xsl:param name="xsltFileName"/>
-	 <xsl:param name="namespace"/>
+	<xsl:param name="namespace"/>
 
 	<xsl:template name="readInvocation">
-	<xsl:param name="variableName"/>
-	<xsl:param name="dataType"/>
-	<xsl:value-of select="$dataType"/><xsl:text> </xsl:text> <xsl:value-of select="$className"/>::read<xsl:value-of select="fnc:capFirst($variableName)"/> (
-	UaStatus *out_status,
-	UaDateTime *sourceTimeStamp,
-    UaDateTime *serverTimeStamp)
-	  {
+		<xsl:param name="variableName"/>
+		<xsl:param name="dataType"/>
+		<xsl:value-of select="$dataType"/><xsl:text> </xsl:text> <xsl:value-of select="$className"/>::read<xsl:value-of select="fnc:capFirst($variableName)"/> (
+		UaStatus *out_status,
+		UaDateTime *sourceTimeStamp,
+		UaDateTime *serverTimeStamp)
+		{
 	  
 	    ServiceSettings   ss;
 	    UaReadValueIds    nodesToRead;
@@ -127,7 +129,7 @@
 	    }	
 	</xsl:template>
 	
-	<xsl:template name="classBody">
+<xsl:template name="classBody">
 	
 	  <xsl:value-of select="$className"/>::
 	  <xsl:value-of select="$className"/>
@@ -143,114 +145,114 @@
 	
 
 
-<xsl:for-each select="d:cachevariable">
-	<xsl:call-template name="readInvocation">
-		<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
-		<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>
-	</xsl:call-template>
-
-	<xsl:if test="@addressSpaceWrite!='forbidden'">
-		<xsl:call-template name="writeInvocation">
-			<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
-			<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>	
-		</xsl:call-template>
-	</xsl:if>
-</xsl:for-each>
-
-<xsl:for-each select="d:sourcevariable">
-	<xsl:if test="@addressSpaceRead!='forbidden'">
+	<xsl:for-each select="d:cachevariable">
 		<xsl:call-template name="readInvocation">
 			<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
 			<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>
 		</xsl:call-template>
-	</xsl:if>
-	<xsl:if test="@addressSpaceWrite!='forbidden'">
-		<xsl:call-template name="writeInvocation">
-			<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
-			<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>
-		</xsl:call-template>	
-	</xsl:if>
-</xsl:for-each>
 
-<xsl:for-each select="d:method">
-  void <xsl:value-of select="$className"/>::<xsl:value-of select="@name"/> (
-  	<xsl:for-each select="d:argument">
-  		<xsl:value-of select="fnc:fixDataTypePassingMethod(@dataType,d:array)"/> in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
+		<xsl:if test="@addressSpaceWrite!='forbidden'">
+			<xsl:call-template name="writeInvocation">
+				<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
+				<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>	
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:for-each>
+
+	<xsl:for-each select="d:sourcevariable">
+		<xsl:if test="@addressSpaceRead!='forbidden'">
+			<xsl:call-template name="readInvocation">
+				<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
+				<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>
+			</xsl:call-template>
+		</xsl:if>
+		<xsl:if test="@addressSpaceWrite!='forbidden'">
+			<xsl:call-template name="writeInvocation">
+				<xsl:with-param name="variableName"><xsl:value-of select="@name"/></xsl:with-param>
+				<xsl:with-param name="dataType"><xsl:value-of select="@dataType"/></xsl:with-param>
+			</xsl:call-template>	
+		</xsl:if>
+	</xsl:for-each>
+
+	<xsl:for-each select="d:method">
+  		void <xsl:value-of select="$className"/>::<xsl:value-of select="@name"/> (
+  		<xsl:for-each select="d:argument">
+  			<xsl:value-of select="fnc:fixDataTypePassingMethod(@dataType,d:array)"/> in_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:argument)+count(../d:returnvalue)">,</xsl:if>
   		
-  	</xsl:for-each>
+  		</xsl:for-each>
     
-  	<xsl:for-each select="d:returnvalue">
-  		<xsl:value-of select="fnc:quasarDataTypeToCppType(@dataType,d:array)"/> &amp; out_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:returnvalue)">,</xsl:if>
-  	</xsl:for-each>
-  )
-  {
-  	
-  	ServiceSettings serviceSettings;
-  	CallIn callRequest;
-  	CallOut co;
-  	
-  	callRequest.objectId = m_objId;
-  	callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="@name"/>"), 2 );
+		<xsl:for-each select="d:returnvalue">
+			<xsl:value-of select="fnc:quasarDataTypeToCppType(@dataType,d:array)"/> &amp; out_<xsl:value-of select="@name"/><xsl:if test="position() &lt; count(../d:returnvalue)">,</xsl:if>
+		</xsl:for-each>
+		)
+		{
+			
+			ServiceSettings serviceSettings;
+			CallIn callRequest;
+			CallOut co;
+			
+			callRequest.objectId = m_objId;
+			callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".<xsl:value-of select="@name"/>"), 2 );
 
-  	
-  	UaVariant v;
-  	
-  	<xsl:if test="d:argument">
-  	    callRequest.inputArguments.create( <xsl:value-of select="count(d:argument)"/> );
-        <xsl:for-each select="d:argument"> 
-            <xsl:choose>
-            <xsl:when test="d:array">
-                <xsl:variable name="input">in_<xsl:value-of select="@name"/></xsl:variable>
-                <xsl:value-of select="fnc:convertVectorToUaVariant($input,'v',@dataType)"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:choose>
-                    <xsl:when test="@dataType='UaByteString'">
-                        v.setByteString( const_cast&lt;UaByteString&amp;&gt;(in_<xsl:value-of select="@name"/>), false );
-                    </xsl:when>
-                    <xsl:otherwise>
-                        v.<xsl:value-of select="fnc:dataTypeToVariantSetter(@dataType)"/>( in_<xsl:value-of select="@name"/> );
-                    </xsl:otherwise>
-                </xsl:choose>    
-            </xsl:otherwise>
-            </xsl:choose>
-	  	
+			
+			UaVariant v;
+			
+			<xsl:if test="d:argument">
+				callRequest.inputArguments.create( <xsl:value-of select="count(d:argument)"/> );
+				<xsl:for-each select="d:argument"> 
+					<xsl:choose>
+					<xsl:when test="d:array">
+						<xsl:variable name="input">in_<xsl:value-of select="@name"/></xsl:variable>
+						<xsl:value-of select="fnc:convertVectorToUaVariant($input,'v',@dataType)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="@dataType='UaByteString'">
+								v.setByteString( const_cast&lt;UaByteString&amp;&gt;(in_<xsl:value-of select="@name"/>), false );
+							</xsl:when>
+							<xsl:otherwise>
+								v.<xsl:value-of select="fnc:dataTypeToVariantSetter(@dataType)"/>( in_<xsl:value-of select="@name"/> );
+							</xsl:otherwise>
+						</xsl:choose>    
+					</xsl:otherwise>
+					</xsl:choose>
+				
 
-	  	v.copyTo( &amp;callRequest.inputArguments[ <xsl:value-of select="position()-1"/> ] );
-	  	</xsl:for-each>
-  	</xsl:if>
-  	
-  	
-  	UaStatus status =
-  	m_session->call(
-  			serviceSettings,
-  			callRequest,
-  			co
-  		);
-  	if (status.isBad())
-  		throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
-  	
-  	<xsl:for-each select="d:returnvalue">
-        v = co.outputArguments[<xsl:value-of select="position()-1"/>];
-        <xsl:choose>
-            <xsl:when test="d:array">
-                <xsl:variable name="output">out_<xsl:value-of select="@name"/></xsl:variable>
-                <xsl:value-of select="fnc:convertUaVariantToVector('v',$output,@dataType)"/>
-            </xsl:when>
-            <xsl:otherwise>
-                v.<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out_<xsl:value-of select="@name"/>);
-            </xsl:otherwise>
-        </xsl:choose> 	 	
-  	</xsl:for-each>	
+				v.copyTo( &amp;callRequest.inputArguments[ <xsl:value-of select="position()-1"/> ] );
+				</xsl:for-each>
+			</xsl:if>
+			
+			
+			UaStatus status =
+			m_session->call(
+					serviceSettings,
+					callRequest,
+					co
+				);
+			if (status.isBad())
+				throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
+			
+			<xsl:for-each select="d:returnvalue">
+				v = co.outputArguments[<xsl:value-of select="position()-1"/>];
+				<xsl:choose>
+					<xsl:when test="d:array">
+						<xsl:variable name="output">out_<xsl:value-of select="@name"/></xsl:variable>
+						<xsl:value-of select="fnc:convertUaVariantToVector('v',$output,@dataType)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						v.<xsl:value-of select="fnc:dataTypeToVariantConverter(@dataType)"/> (out_<xsl:value-of select="@name"/>);
+					</xsl:otherwise>
+				</xsl:choose> 	 	
+			</xsl:for-each>	
 
-  
-  }
+		
+		}
 
-</xsl:for-each>
+	</xsl:for-each>
 
-	</xsl:template>
+</xsl:template>
 	
-	<xsl:template match="/">	
+<xsl:template match="/">	
 	
 	#include &lt;iostream&gt;
 	#include &lt;<xsl:value-of select="$className"/>.h&gt;
@@ -273,7 +275,7 @@
 	}
 
 
-	</xsl:template>
+</xsl:template>
 
 
 	
