@@ -3,13 +3,13 @@
 '''
 Delphi.py
 
-@author:     Paris Moschovakos <paris.moschovakos@cern.ch>
 @author:     Piotr Nikiel <piotr.nikiel@gmail.com>
+@author:     Paris Moschovakos <paris.moschovakos@cern.ch>
 
 @copyright:  2020 CERN
 
 @license:
-Copyright (c) 2015, CERN.
+Copyright (c) 2020, CERN.
 All rights reserved.
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
