@@ -108,8 +108,8 @@ class Delphi():
         output += "nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;\n\n"
         output += "UaVariant v ( data );\n\n"
         if dataType == 'UaByteString':
-            output += "v.setByteString( data, false );\n"
-        output += "\n\n"
+            output += "v.setByteString( data, false );\n\n"
+        output += "\n"
         output += "dataValues.create (1);\n"
         output += "v.copyTo( &nodesToWrite[0].Value.Value );\n\n"
         output += "UaStatus status = m_session->write(\n"

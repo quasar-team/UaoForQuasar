@@ -70,8 +70,8 @@ namespace {{namespace}}
 
 		UaVariant v;
 
-
 		{% if m.argument|length>0 %}
+
 			callRequest.inputArguments.create( {{m.argument|length}} );
 			{% for arg in m.argument %}
 				{% if arg.array|length>0 %}
@@ -87,7 +87,7 @@ namespace {{namespace}}
 
 
 
-				v.copyTo( &callRequest.inputArguments[ {{m.argument|length - 1}} ] );
+				v.copyTo( &callRequest.inputArguments[ {{loop.index0}} ] );
 			{% endfor %}
 		{% endif %}
 
@@ -104,10 +104,10 @@ namespace {{namespace}}
 		
 		{% for rv in m.returnvalue %}
 
-			v = co.outputArguments[{{m.argument|length - 1}}];
+			v = co.outputArguments[{{loop.index0}}];
 
 			{% if rv.array|length>0 %}
-				{{oracle.uavariant_to_vector_function(rv.get('dataType'))}}
+				{{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
 			{% else %}
 				v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
 			{% endif %}
