@@ -34,14 +34,14 @@ namespace {{namespace}}
 {{className}}::
 {{className}}
 (
-    UaSession* session,
-    UaNodeId objId
-    ) :
-    m_session(session),
-    m_objId (objId)
-    {
-    
-    }	
+  UaSession* session,
+  UaNodeId objId
+  ) :
+  m_session(session),
+  m_objId (objId)
+  {
+  
+  }	
 
 
 
@@ -67,70 +67,70 @@ namespace {{namespace}}
 	void {{className}}::{{m.get('name')}} (
 	{% for arg in m.argument %}
 		{{oracle.fix_data_type_passing_method(arg.get('dataType'), arg.array|length>0 )}} in_{{arg.get('name')}}
-    	{%- if loop.index < allArgsLen %},
-    	{% endif %}
+    {%- if loop.index < allArgsLen %},
+    {% endif %}
 	{% endfor %}
 	{% for rv in m.returnvalue %}
     	{{oracle.quasar_data_type_to_cpp_type(rv.get('dataType'), rv.array|length>0 )}}& out_{{rv.get('name')}}
     	{%- if not loop.last %},
     	{% endif %}
-    {% endfor %}
+  {% endfor %}
 	
 	)
 	{
 
-		ServiceSettings serviceSettings;
-		CallIn callRequest;
-		CallOut co;
+  ServiceSettings serviceSettings;
+  CallIn callRequest;
+  CallOut co;
 		
-		callRequest.objectId = m_objId;
-		callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
+  callRequest.objectId = m_objId;
+  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
 
 
-		UaVariant v;
+  UaVariant v;
 
-		{% if m.argument|length>0 %}
+  {% if m.argument|length>0 %}
 
-			callRequest.inputArguments.create( {{m.argument|length}} );
-			{% for arg in m.argument %}
-				{% if arg.array|length>0 %}
-					in_{{arg.get('name')}}
-					{{oracle.vector_to_uavariant_function(arg.get('dataType'))}}
-				{% elif arg.get('dataType') == 'UaByteString' %}
+    callRequest.inputArguments.create( {{m.argument|length}} );
+    {% for arg in m.argument %}
+      {% if arg.array|length>0 %}
+        in_{{arg.get('name')}}
+        {{oracle.vector_to_uavariant_function(arg.get('dataType'))}}
+      {% elif arg.get('dataType') == 'UaByteString' %}
 
-					v.setByteString( const_cast<UaByteString&>(in_{{arg.get('name')}}), false );
-				{% else %}
+        v.setByteString( const_cast<UaByteString&>(in_{{arg.get('name')}}), false );
+      {% else %}
 
-					v.{{oracle.data_type_to_variant_setter(arg.get('dataType'))}}( in_{{arg.get('name')}} );
-				{% endif %}
-
-
-
-				v.copyTo( &callRequest.inputArguments[ {{loop.index0}} ] );
-			{% endfor %}
-		{% endif %}
+        v.{{oracle.data_type_to_variant_setter(arg.get('dataType'))}}( in_{{arg.get('name')}} );
+      {% endif %}
 
 
 
-		UaStatus status =
-		m_session->call(
-				serviceSettings,
-				callRequest,
-				co
-			);
-		if (status.isBad())
-			throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
+      v.copyTo( &callRequest.inputArguments[ {{loop.index0}} ] );
+    {% endfor %}
+  {% endif %}
+
+
+
+  UaStatus status =
+  m_session->call(
+      serviceSettings,
+      callRequest,
+      co
+    );
+  if (status.isBad())
+    throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
 		
-		{% for rv in m.returnvalue %}
+  {% for rv in m.returnvalue %}
 
-			v = co.outputArguments[{{loop.index0}}];
+    v = co.outputArguments[{{loop.index0}}];
 
-			{% if rv.array|length>0 %}
-				{{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
-			{% else %}
-				v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
-			{% endif %}
-		{% endfor %}
+    {% if rv.array|length>0 %}
+      {{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
+    {% else %}
+      v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
+    {% endif %}
+  {% endfor %}
 
 
 

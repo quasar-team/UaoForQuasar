@@ -37,52 +37,52 @@ class {{className}}
 
 public:
 
-	{{className}}(
-		UaSession* session,
-        UaNodeId objId
-	);
+  {{className}}(
+    UaSession* session,
+    UaNodeId objId
+  );
 
 // getters, setters for all variables
 {% for cv in designInspector.objectify_cache_variables(className) %}
-{{cv.get('dataType')}} read{{cv.get('name')|capFirst}} (
-		UaStatus      *out_status=nullptr,
-  		UaDateTime    *sourceTimeStamp=nullptr,
-   		UaDateTime    *serverTimeStamp=nullptr);
-	{% if cv.get('addressSpaceWrite') != 'forbidden' %}
+  {{cv.get('dataType')}} read{{cv.get('name')|capFirst}} (
+  UaStatus      *out_status=nullptr,
+  UaDateTime    *sourceTimeStamp=nullptr,
+  UaDateTime    *serverTimeStamp=nullptr);
+  {% if cv.get('addressSpaceWrite') != 'forbidden' %}
 
-		void write{{cv.get('name')|capFirst}} (
-		{{cv.get('dataType')}}& data,
-		UaStatus *out_status=nullptr);
-	{% endif %}
+    void write{{cv.get('name')|capFirst}} (
+    {{cv.get('dataType')}}& data,
+    UaStatus *out_status=nullptr);
+  {% endif %}
 {% endfor %}
 {% for sv in this.sourcevariable %}
-	{% if sv.get('addressSpaceRead') != 'forbidden' %}
-    	{{sv.get('dataType')}} read{{sv.get('name')|capFirst}} (
-		UaStatus     *out_status=nullptr,
-		UaDateTime   *sourceTimeStamp=nullptr,
-        UaDateTime   *serverTimeStamp=nullptr);
-    {% endif %}
-	{% if sv.get('addressSpaceWrite') != 'forbidden' %}
+  {% if sv.get('addressSpaceRead') != 'forbidden' %}
+    {{sv.get('dataType')}} read{{sv.get('name')|capFirst}} (
+    UaStatus     *out_status=nullptr,
+    UaDateTime   *sourceTimeStamp=nullptr,
+    UaDateTime   *serverTimeStamp=nullptr);
+  {% endif %}
+  {% if sv.get('addressSpaceWrite') != 'forbidden' %}
 
-		void write{{sv.get('name')|capFirst}} (
-		{{sv.get('dataType')}}& data,
-		UaStatus *out_status=nullptr);
-	{% endif %}
+    void write{{sv.get('name')|capFirst}} (
+    {{sv.get('dataType')}}& data,
+    UaStatus *out_status=nullptr);
+  {% endif %}
 {% endfor %}
 
 {% for m in this.method %}
-{% set allArgsLen = m.argument|length + m.returnvalue|length %}
-	void {{m.get('name')}}(
-	{% for arg in m.argument %}
-		{{oracle.fix_data_type_passing_method(arg.get('dataType'), arg.array|length>0 )}} in_{{arg.get('name')}}
-    	{%- if loop.index < allArgsLen %},
-    	{% endif %}
-	{% endfor %}
-	{% for rv in m.returnvalue %}
-    	{{oracle.quasar_data_type_to_cpp_type(rv.get('dataType'), rv.array|length>0 )}}& out_{{rv.get('name')}}
-    	{%- if not loop.last %},
-    	{% endif %}
-    {% endfor %}
+  {% set allArgsLen = m.argument|length + m.returnvalue|length %}
+  void {{m.get('name')}}(
+  {% for arg in m.argument %}
+    {{oracle.fix_data_type_passing_method(arg.get('dataType'), arg.array|length>0 )}} in_{{arg.get('name')}}
+    {%- if loop.index < allArgsLen %},
+    {% endif %}
+  {% endfor %}
+  {% for rv in m.returnvalue %}
+    {{oracle.quasar_data_type_to_cpp_type(rv.get('dataType'), rv.array|length>0 )}}& out_{{rv.get('name')}}
+    {%- if not loop.last %},
+    {% endif %}
+  {% endfor %}
 
 );
 
@@ -90,8 +90,8 @@ public:
 
 private:
 
-	UaSession  * m_session;
-	UaNodeId     m_objId;
+  UaSession  * m_session;
+  UaNodeId     m_objId;
 
 };
 
