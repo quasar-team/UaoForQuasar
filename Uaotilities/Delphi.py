@@ -43,6 +43,7 @@ Pythia = Oracle()
 class Delphi():
 
     def readPronouncement(self, className, variableName, dataType):
+        # TODO: this is to go away.
         output = dataType + " " + className + "::read" + cap_first(variableName) + " (\n"
         output += "UaStatus *out_status,\n"
         output += "UaDateTime *sourceTimeStamp,\n"
@@ -131,4 +132,3 @@ class Delphi():
         output += "}\n\n"
         output += "}"
         return output
-

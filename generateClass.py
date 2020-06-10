@@ -68,7 +68,6 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient', x
     additionalParam = {
         'className'             : className, 
         'namespace'             : namespace,
-        'readPronouncement'     : adyton.readPronouncement,
         'writePronouncement'    : adyton.writePronouncement}
 
     try:
