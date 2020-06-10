@@ -34,10 +34,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import sys
 import os
 from colorama import Fore, Style
-from transformDesign import transformDesign
-import quasar_basic_utils
 
 sys.path.insert(0, 'FrameworkInternals')
+
+from transformDesign import transformDesign
+import quasar_basic_utils
 
 uao_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(uao_path, 'Uaotilities'))
@@ -96,4 +97,3 @@ if __name__=="__main__":
     main()
     
     
-
