@@ -40,97 +40,15 @@ Pythia = Oracle()
 
 class Delphi():
 
-    def readPronouncement(self, className, variableName, dataType):
-        output = dataType + " " + className + \
-            "::read" + cap_first(variableName) + " (\n"
-        output += "UaStatus *out_status,\n"
-        output += "UaDateTime *sourceTimeStamp,\n"
-        output += "UaDateTime *serverTimeStamp)\n"
-        output += "{\n\n"
-        output += "ServiceSettings   ss;\n"
-        output += "UaReadValueIds    nodesToRead;\n"
-        output += "UaDataValues      dataValues;\n"
-        output += "UaDiagnosticInfos diagnosticInfos;\n\n"
-        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + \
-            variableName + "\"), m_objId.namespaceIndex() );\n\n"
-        output += "nodesToRead.create(1);\n"
-        output += "nodeId.copyTo( &nodesToRead[0].NodeId );\n"
-        output += "nodesToRead[0].AttributeId = OpcUa_Attributes_Value;\n\n"
-        output += "dataValues.create (1);\n\n"
-        output += "UaStatus status = m_session->read(\n"
-        output += "ss,\n"
-        output += "0 /*max age*/,\n"
-        output += "OpcUa_TimestampsToReturn_Both,\n"
-        output += "nodesToRead,\n"
-        output += "dataValues,\n"
-        output += "diagnosticInfos\n"
-        output += ");\n"
-        output += "if (status.isBad())\n"
-        output += "throw Exceptions::BadStatusCode(\"OPC-UA read failed\", status.statusCode());\n"
-        output += "if (out_status)\n"
-        output += "*out_status = dataValues[0].StatusCode;\n"
-        output += "else\n"
-        output += "{\n"
-        output += "if (! UaStatus(dataValues[0].StatusCode).isGood())\n"
-        output += "throw Exceptions::BadStatusCode(\"OPC-UA read: variable status is not good\", dataValues[0].StatusCode );\n"
-        output += "}\n\n"
-        output += dataType + " out;\n\n\n"
+    def readPronouncementToType(self, dataType):
+        """ Helper for read pronouncement based on the datatype """
         if dataType == 'UaString':
-            output += "out = UaVariant(dataValues[0].Value).toString();\n"
+            return "out = UaVariant(dataValues[0].Value).toString();"
         else:
-            output += "UaStatus conversionStatus = (UaVariant(dataValues[0].Value))." + \
-                Pythia.data_type_to_variant_converter(dataType) + " (out);\n"
-            output += "if (! conversionStatus.isGood())\n"
-            output += "{\n"
-            output += "throw std::runtime_error(std::string(\"OPC-UA read: read succeeded but conversion to native type failed (was it NULL value?): \") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );\n"
-            output += "}\n"
-        output += "\n\n"
-        output += "if (sourceTimeStamp)\n"
-        output += "*sourceTimeStamp = dataValues[0].SourceTimestamp;\n"
-        output += "if (serverTimeStamp)\n"
-        output += "*serverTimeStamp = dataValues[0].ServerTimestamp;\n\n"
-        output += "return out;\n"
-        output += "}\n"
-        return output
-
-    def writePronouncement(self, className, variableName, dataType):
-        output = "void  " + className + "::write" + \
-            cap_first(variableName) + " (\n"
-        output += dataType + " & data,\n"
-        output += "UaStatus *out_status)\n"
-        output += "{\n"
-        output += "ServiceSettings   ss;\n"
-        output += "UaWriteValues    nodesToWrite;\n"
-        output += "UaDataValues      dataValues;\n"
-        output += "UaDiagnosticInfos diagnosticInfos;\n"
-        output += "UaStatusCodeArray results;\n\n"
-        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + \
-            variableName + "\"), m_objId.namespaceIndex()  );\n\n"
-        output += "nodesToWrite.create(1);\n"
-        output += "nodeId.copyTo( &nodesToWrite[0].NodeId );\n"
-        output += "nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;\n\n"
-        output += "UaVariant v ( data );\n\n"
-        if dataType == 'UaByteString':
-            output += "v.setByteString( data, false );\n\n"
-        output += "\n"
-        output += "dataValues.create (1);\n"
-        output += "v.copyTo( &nodesToWrite[0].Value.Value );\n\n"
-        output += "UaStatus status = m_session->write(\n"
-        output += "ss,\n"
-        output += "nodesToWrite,\n"
-        output += "results,\n"
-        output += "diagnosticInfos\n"
-        output += ");\n"
-        output += "if (out_status)\n"
-        output += "{\n"
-        output += "*out_status = status;\n"
-        output += "}\n"
-        output += "else\n"
-        output += "{\n"
-        output += "if (status.isBad())\n"
-        output += "throw Exceptions::BadStatusCode(\"OPC-UA write failed\", status.statusCode() );\n"
-        output += "if (results[0] != OpcUa_Good)\n"
-        output += "throw Exceptions::BadStatusCode (\"OPC-UA write failed\", results[0] );\n"
-        output += "}\n\n"
-        output += "}"
-        return output
+            return '''\
+                UaStatus conversionStatus = (UaVariant(dataValues[0].Value)).{toType} (out);
+                if (! conversionStatus.isGood())
+                {{
+                throw std::runtime_error(std::string(\"OPC-UA read: read succeeded but conversion to native type failed (was it NULL value?): \") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );
+                }}\
+                '''.format(toType=Pythia.data_type_to_variant_converter(dataType))

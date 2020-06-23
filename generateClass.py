@@ -79,8 +79,7 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', 
     additionalParam = {
         'className': className,
         'namespace': namespace,
-        'readPronouncement': adyton.readPronouncement,
-        'writePronouncement': adyton.writePronouncement}
+        'readPronouncementToType': adyton.readPronouncementToType}
 
     try:
         transformDesign(
