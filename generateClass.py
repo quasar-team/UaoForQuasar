@@ -37,28 +37,33 @@ from os import path
 from colorama import Fore, Style
 
 uao_path = os.path.abspath(os.path.dirname(__file__))
-quasar_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+quasar_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), os.pardir))
 
 try:
     sys.path.insert(0, os.path.join(quasar_path, 'FrameworkInternals'))
 except OSError:
     if not path.exists(os.path.join(quasar_path, 'FrameworkInternals')):
-        sys.exit('Please check that UaoForQuasar is directly deployed in a quasar project')
+        sys.exit(
+            'Please check that UaoForQuasar is directly deployed in a quasar project')
 
-from transformDesign import transformDesign
 import quasar_basic_utils
+from transformDesign import transformDesign
 
 sys.path.insert(0, os.path.join(uao_path, 'Uaotilities'))
+
 from Delphi import Delphi
 
-# As of June 2020 the default engine for code generation is Jinja2. A fallback mode is 
+# As of June 2020 the default engine for code generation is Jinja2. A fallback mode is
 # kept temporarely and can be enabled by using the following switch
 XSLT_GENERATOR = False
 
-def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient', xsltGenerator=XSLT_GENERATOR):
-    output_header = os.path.join(uaoDirectory,'generated','{0}.h'.format(className))
-    output_body = os.path.join(uaoDirectory,'generated','{0}.cpp'.format(className))
 
+def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', xsltGenerator=XSLT_GENERATOR):
+    output_header = os.path.join(
+        uaoDirectory, 'generated', '{0}.h'.format(className))
+    output_body = os.path.join(
+        uaoDirectory, 'generated', '{0}.cpp'.format(className))
 
     if xsltGenerator:
         print(Fore.RED + 'Using XSLT engine' + Style.RESET_ALL)
@@ -72,35 +77,36 @@ def runGenerator(className,uaoDirectory='UaoForQuasar', namespace='UaoClient', x
     adyton = Delphi()
 
     additionalParam = {
-        'className'             : className, 
-        'namespace'             : namespace,
-        'readPronouncement'     : adyton.readPronouncement,
-        'writePronouncement'    : adyton.writePronouncement}
+        'className': className,
+        'namespace': namespace,
+        'readPronouncement': adyton.readPronouncement,
+        'writePronouncement': adyton.writePronouncement}
 
     try:
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, templatesPath, 'designToClassHeader.' + transformPostfix),
-            outputFile=output_header, 
-            requiresMerge=False, 
-            astyleRun=True, 
+            xsltTransformation=os.path.join(
+                uaoDirectory, templatesPath, 'designToClassHeader.' + transformPostfix),
+            outputFile=output_header,
+            requiresMerge=False,
+            astyleRun=True,
             additionalParam=additionalParam)
 
         transformDesign(
-            xsltTransformation=os.path.join(uaoDirectory, templatesPath, 'designToClassBody.' + transformPostfix),
-            outputFile=output_body, 
-            requiresMerge=False, 
-            astyleRun=True, 
+            xsltTransformation=os.path.join(
+                uaoDirectory, templatesPath, 'designToClassBody.' + transformPostfix),
+            outputFile=output_body,
+            requiresMerge=False,
+            astyleRun=True,
             additionalParam=additionalParam)
 
     except:
         quasar_basic_utils.quasaric_exception_handler()
-    
+
+
 def main():
     className = sys.argv[1]
     runGenerator(className)
-    
-if __name__=="__main__":
-    main()
-    
-    
 
+
+if __name__ == "__main__":
+    main()

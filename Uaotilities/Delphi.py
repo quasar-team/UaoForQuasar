@@ -37,10 +37,12 @@ from transform_filters import cap_first
 
 Pythia = Oracle()
 
+
 class Delphi():
 
     def readPronouncement(self, className, variableName, dataType):
-        output = dataType + " " + className + "::read" + cap_first(variableName) + " (\n"
+        output = dataType + " " + className + \
+            "::read" + cap_first(variableName) + " (\n"
         output += "UaStatus *out_status,\n"
         output += "UaDateTime *sourceTimeStamp,\n"
         output += "UaDateTime *serverTimeStamp)\n"
@@ -49,7 +51,8 @@ class Delphi():
         output += "UaReadValueIds    nodesToRead;\n"
         output += "UaDataValues      dataValues;\n"
         output += "UaDiagnosticInfos diagnosticInfos;\n\n"
-        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + variableName + "\"), m_objId.namespaceIndex() );\n\n"
+        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + \
+            variableName + "\"), m_objId.namespaceIndex() );\n\n"
         output += "nodesToRead.create(1);\n"
         output += "nodeId.copyTo( &nodesToRead[0].NodeId );\n"
         output += "nodesToRead[0].AttributeId = OpcUa_Attributes_Value;\n\n"
@@ -71,11 +74,12 @@ class Delphi():
         output += "if (! UaStatus(dataValues[0].StatusCode).isGood())\n"
         output += "throw Exceptions::BadStatusCode(\"OPC-UA read: variable status is not good\", dataValues[0].StatusCode );\n"
         output += "}\n\n"
-        output += dataType + " out;\n\n\n";
+        output += dataType + " out;\n\n\n"
         if dataType == 'UaString':
             output += "out = UaVariant(dataValues[0].Value).toString();\n"
         else:
-            output += "UaStatus conversionStatus = (UaVariant(dataValues[0].Value))." + Pythia.data_type_to_variant_converter(dataType) + " (out);\n"
+            output += "UaStatus conversionStatus = (UaVariant(dataValues[0].Value))." + \
+                Pythia.data_type_to_variant_converter(dataType) + " (out);\n"
             output += "if (! conversionStatus.isGood())\n"
             output += "{\n"
             output += "throw std::runtime_error(std::string(\"OPC-UA read: read succeeded but conversion to native type failed (was it NULL value?): \") + UaStatus(dataValues[0].StatusCode).toString().toUtf8() );\n"
@@ -90,7 +94,8 @@ class Delphi():
         return output
 
     def writePronouncement(self, className, variableName, dataType):
-        output = "void  " + className + "::write" + cap_first(variableName) + " (\n"
+        output = "void  " + className + "::write" + \
+            cap_first(variableName) + " (\n"
         output += dataType + " & data,\n"
         output += "UaStatus *out_status)\n"
         output += "{\n"
@@ -99,7 +104,8 @@ class Delphi():
         output += "UaDataValues      dataValues;\n"
         output += "UaDiagnosticInfos diagnosticInfos;\n"
         output += "UaStatusCodeArray results;\n\n"
-        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + variableName + "\"), m_objId.namespaceIndex()  );\n\n"
+        output += "UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(\"." + \
+            variableName + "\"), m_objId.namespaceIndex()  );\n\n"
         output += "nodesToWrite.create(1);\n"
         output += "nodeId.copyTo( &nodesToWrite[0].NodeId );\n"
         output += "nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;\n\n"
@@ -128,4 +134,3 @@ class Delphi():
         output += "}\n\n"
         output += "}"
         return output
-
