@@ -33,15 +33,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
 import os
+from os import path
 from colorama import Fore, Style
+
+uao_path = os.path.abspath(os.path.dirname(__file__))
+quasar_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+
+try:
+    sys.path.insert(0, os.path.join(quasar_path, 'FrameworkInternals'))
+except OSError:
+    if not path.exists(os.path.join(quasar_path, 'FrameworkInternals')):
+        sys.exit('Please check that UaoForQuasar is directly deployed in a quasar project')
+
 from transformDesign import transformDesign
 import quasar_basic_utils
 
-sys.path.insert(0, 'FrameworkInternals')
-
-uao_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(uao_path, 'Uaotilities'))
-
 from Delphi import Delphi
 
 # As of June 2020 the default engine for code generation is Jinja2. A fallback mode is 

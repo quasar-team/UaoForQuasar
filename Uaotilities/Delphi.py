@@ -32,9 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 import sys
-
-sys.path.insert(0, 'FrameworkInternals')
-
 from Oracle import Oracle
 from transform_filters import cap_first
 
