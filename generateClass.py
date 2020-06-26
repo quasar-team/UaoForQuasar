@@ -35,6 +35,7 @@ import sys
 import os
 from os import path
 from colorama import Fore, Style
+import argparse
 
 uao_path = os.path.abspath(os.path.dirname(__file__))
 quasar_path = os.path.abspath(os.path.join(
@@ -103,8 +104,14 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', 
 
 
 def main():
-    className = sys.argv[1]
-    runGenerator(className)
+    parser = argparse.ArgumentParser(
+        description='Creates OPC-UA clients for C++, see: https://github.com/quasar-team/UaoForQuasar')
+    parser.add_argument('--namespace', default='UaoClient', help="C++ namespace")
+    parser.add_argument('quasar_class', help="quasar class which you want to get generated")
+    
+    args = parser.parse_args()
+    
+    runGenerator(args.quasar_class, namespace = args.namespace)
 
 
 if __name__ == "__main__":
