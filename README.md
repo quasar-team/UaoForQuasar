@@ -44,7 +44,7 @@ git submodule update
 
 python UaoForQuasar/generateClass.py MyClass
 
-The client class header and body will be places into UaForQuasar/output
+The client class header and body will be places into UaoForQuasar/generated
 
 4. At this stage you can use your client class. 
 Please look into demo/ directory where a simple, CMake-based project which integrated generated classes
@@ -56,5 +56,3 @@ make
 
 Note that you might need to adjust demo.cpp according to the quasar class you want to talk to.
 Note that you might need to adjust CMakeLists.txt for the UASDK paths etc.
-
-
