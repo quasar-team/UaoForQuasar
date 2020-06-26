@@ -1,0 +1,102 @@
+{# © Copyright CERN, 2020.                                                       #}
+{# All rights not expressly granted are reserved.                                #}
+{# This file is part of Quasar.                                                  #}
+{#                                                                               #}
+{# Quasar is free software: you can redistribute it and/or modify                #}
+{# it under the terms of the GNU Lesser General Public Licence as published by   #}
+{# the Free Software Foundation, either version 3 of the Licence.                #}
+{# Quasar is distributed in the hope that it will be useful,                     #}
+{# but WITHOUT ANY WARRANTY; without even the implied warranty of                #}
+{#                                                                               #}
+{# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 #}
+{# GNU Lesser General Public Licence for more details.                           #}
+{#                                                                               #}
+{# You should have received a copy of the GNU Lesser General Public License      #}
+{# along with Quasar.  If not, see <http://www.gnu.org/licenses/>                #}
+{#                                                                               #}
+{# Authors:                                                                      #}
+{#   Piotr Nikiel <piotr@nikiel.info>                                            #}
+{#   Paris Moschovakos <paris.moschovakos@cern.ch> (Jinja2 translation)          #}
+
+{% set this = designInspector.objectify_class(className) %}
+#ifndef __UAO__{{namespace}}__{{className}}__
+#define __UAO__{{namespace}}__{{className}}__
+
+#include <iostream>
+#include <uaclient/uaclientsdk.h>
+
+namespace {{namespace}}
+{
+
+using namespace UaClientSdk;
+
+
+
+class {{className}}
+{
+
+public:
+
+  {{className}}(
+    UaSession* session,
+    UaNodeId objId
+  );
+
+// getters, setters for all variables
+{% for cv in designInspector.objectify_cache_variables(className) %}
+  {{cv.get('dataType')}} read{{cv.get('name')|capFirst}} (
+  UaStatus      *out_status=nullptr,
+  UaDateTime    *sourceTimeStamp=nullptr,
+  UaDateTime    *serverTimeStamp=nullptr);
+  {% if cv.get('addressSpaceWrite') != 'forbidden' %}
+
+    void write{{cv.get('name')|capFirst}} (
+    {{cv.get('dataType')}}& data,
+    UaStatus *out_status=nullptr);
+  {% endif %}
+{% endfor %}
+{% for sv in this.sourcevariable %}
+  {% if sv.get('addressSpaceRead') != 'forbidden' %}
+    {{sv.get('dataType')}} read{{sv.get('name')|capFirst}} (
+    UaStatus     *out_status=nullptr,
+    UaDateTime   *sourceTimeStamp=nullptr,
+    UaDateTime   *serverTimeStamp=nullptr);
+  {% endif %}
+  {% if sv.get('addressSpaceWrite') != 'forbidden' %}
+
+    void write{{sv.get('name')|capFirst}} (
+    {{sv.get('dataType')}}& data,
+    UaStatus *out_status=nullptr);
+  {% endif %}
+{% endfor %}
+
+{% for m in this.method %}
+  {% set allArgsLen = m.argument|length + m.returnvalue|length %}
+  void {{m.get('name')}}(
+  {% for arg in m.argument %}
+    {{oracle.fix_data_type_passing_method(arg.get('dataType'), arg.array|length>0 )}} in_{{arg.get('name')}}
+    {%- if loop.index < allArgsLen %},
+    {% endif %}
+  {% endfor %}
+  {% for rv in m.returnvalue %}
+    {{oracle.quasar_data_type_to_cpp_type(rv.get('dataType'), rv.array|length>0 )}}& out_{{rv.get('name')}}
+    {%- if not loop.last %},
+    {% endif %}
+  {% endfor %}
+
+);
+
+{% endfor %}
+
+private:
+
+  UaSession  * m_session;
+  UaNodeId     m_objId;
+
+};
+
+
+
+}
+
+#endif // __UAO__{{namespace}}__{{className}}__

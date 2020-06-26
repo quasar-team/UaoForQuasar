@@ -1,0 +1,242 @@
+{# © Copyright CERN, 2020.                                                       #}
+{# All rights not expressly granted are reserved.                                #}
+{# This file is part of Quasar.                                                  #}
+{#                                                                               #}
+{# Quasar is free software: you can redistribute it and/or modify                #}
+{# it under the terms of the GNU Lesser General Public Licence as published by   #}
+{# the Free Software Foundation, either version 3 of the Licence.                #}
+{# Quasar is distributed in the hope that it will be useful,                     #}
+{# but WITHOUT ANY WARRANTY; without even the implied warranty of                #}
+{#                                                                               #}
+{# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 #}
+{# GNU Lesser General Public Licence for more details.                           #}
+{#                                                                               #}
+{# You should have received a copy of the GNU Lesser General Public License      #}
+{# along with Quasar.  If not, see <http://www.gnu.org/licenses/>                #}
+{#                                                                               #}
+{# Authors:                                                                      #}
+{#   Piotr Nikiel <piotr@nikiel.info>                                            #}
+{#   Paris Moschovakos <paris.moschovakos@cern.ch> (Jinja2 translation)          #}
+{% macro readPronouncement (className, variableName, dataType) %}
+  {{dataType}} {{className}}::read{{variableName|capFirst}} (
+	UaStatus *out_status,
+	UaDateTime *sourceTimeStamp,
+    UaDateTime *serverTimeStamp)
+	  {
+	  
+	    ServiceSettings   ss;
+	    UaReadValueIds    nodesToRead;
+	    UaDataValues      dataValues;
+	    UaDiagnosticInfos diagnosticInfos;
+
+      UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".{{variableName}}"), m_objId.namespaceIndex() );
+	   
+	    nodesToRead.create(1);
+	    nodeId.copyTo( &nodesToRead[0].NodeId );
+	    nodesToRead[0].AttributeId = OpcUa_Attributes_Value;
+	
+	    dataValues.create (1);
+	    
+	  	UaStatus status = m_session->read(
+			ss,
+			0 /*max age*/,
+			OpcUa_TimestampsToReturn_Both,
+			nodesToRead,
+			dataValues,
+			diagnosticInfos
+	  	);
+	  	if (status.isBad())
+	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
+	    if (out_status)
+	       *out_status = dataValues[0].StatusCode;
+	    else
+	    {
+	        if (! UaStatus(dataValues[0].StatusCode).isGood())
+	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );	
+	    }   
+	  	
+      {{dataType}} out;
+
+
+  {{readPronouncementToType(dataType)}}
+
+
+	  	if (sourceTimeStamp)
+        	*sourceTimeStamp = dataValues[0].SourceTimestamp;
+        if (serverTimeStamp)
+            *serverTimeStamp = dataValues[0].ServerTimestamp;
+	  	
+	  	return out;
+	    }
+{% endmacro %}
+
+{% macro writePronouncement (className, variableName, dataType) %}
+    void  {{className}}::write {{variableName|capFirst}} (
+      {{dataType}}& data,
+			UaStatus                                 *out_status)
+	    {
+	  	ServiceSettings   ss;
+	    UaWriteValues    nodesToWrite;
+	    UaDataValues      dataValues;
+	    UaDiagnosticInfos diagnosticInfos;
+	    UaStatusCodeArray results;
+
+        UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".{{variableName}}"), m_objId.namespaceIndex()  );
+
+	    nodesToWrite.create(1);
+	    nodeId.copyTo( &nodesToWrite[0].NodeId );
+	    nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;
+		
+		UaVariant v ( data );
+  {%if dataType == 'UaByteString' %}
+        v.setByteString( data, false );
+  {% endif %}
+
+	    dataValues.create (1);
+	    v.copyTo( &nodesToWrite[0].Value.Value );
+	    
+	  	UaStatus status = m_session->write(
+			ss,
+			nodesToWrite,
+			results,
+			diagnosticInfos
+	  	);
+	  	if (out_status)
+	  	{
+	  		*out_status = status;
+	  	}
+	  	else
+	  	{
+		  	if (status.isBad())
+		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
+		  	if (results[0] != OpcUa_Good)
+		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
+	  	}
+	
+	    }	
+{% endmacro %}
+
+{% set this = designInspector.objectify_class(className) %}
+#include <iostream>
+#include <{{className}}.h>
+#include <uaclient/uasession.h>
+#include <stdexcept>
+#include <{{namespace}}ArrayTools.h>
+#include <{{namespace}}UaoExceptions.h>
+
+namespace {{namespace}}
+{
+
+
+{{className}}::
+{{className}}
+(
+  UaSession* session,
+  UaNodeId objId
+  ) :
+  m_session(session),
+  m_objId (objId)
+  {
+  
+  }	
+
+
+
+{% for cv in designInspector.objectify_cache_variables(className) %}
+	{{readPronouncement(className, cv.get('name'), cv.get('dataType'))}}
+	{% if cv.get('addressSpaceWrite') != 'forbidden' %}
+
+		{{writePronouncement(className, cv.get('name'), cv.get('dataType'))}}
+	{% endif %}
+{% endfor %}
+{% for sv in this.sourcevariable %}
+	{% if sv.get('addressSpaceRead') != 'forbidden' %}
+		{{readPronouncement(className, sv.get('name'), sv.get('dataType'))}}
+	{% endif %}
+	{% if sv.get('addressSpaceWrite') != 'forbidden' %}
+
+		{{writePronouncement(className, sv.get('name'), sv.get('dataType'))}}
+	{% endif %}
+{% endfor %}
+
+{% for m in this.method %}
+{% set allArgsLen = m.argument|length + m.returnvalue|length %}
+	void {{className}}::{{m.get('name')}} (
+	{% for arg in m.argument %}
+		{{oracle.fix_data_type_passing_method(arg.get('dataType'), arg.array|length>0 )}} in_{{arg.get('name')}}
+    {%- if loop.index < allArgsLen %},
+    {% endif %}
+	{% endfor %}
+	{% for rv in m.returnvalue %}
+    {{oracle.quasar_data_type_to_cpp_type(rv.get('dataType'), rv.array|length>0 )}}& out_{{rv.get('name')}}
+    {%- if not loop.last %},
+    {% endif %}
+  {% endfor %}
+	
+	)
+	{
+
+  ServiceSettings serviceSettings;
+  CallIn callRequest;
+  CallOut co;
+		
+  callRequest.objectId = m_objId;
+  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
+
+
+  UaVariant v;
+
+  {% if m.argument|length>0 %}
+
+    callRequest.inputArguments.create( {{m.argument|length}} );
+    {% for arg in m.argument %}
+      {% if arg.array|length>0 %}
+        in_{{arg.get('name')}}
+        {{oracle.vector_to_uavariant_function(arg.get('dataType'))}}
+      {% elif arg.get('dataType') == 'UaByteString' %}
+
+        v.setByteString( const_cast<UaByteString&>(in_{{arg.get('name')}}), false );
+      {% else %}
+
+        v.{{oracle.data_type_to_variant_setter(arg.get('dataType'))}}( in_{{arg.get('name')}} );
+      {% endif %}
+
+
+
+      v.copyTo( &callRequest.inputArguments[ {{loop.index0}} ] );
+    {% endfor %}
+  {% endif %}
+
+
+
+  UaStatus status =
+  m_session->call(
+      serviceSettings,
+      callRequest,
+      co
+    );
+  if (status.isBad())
+    throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
+		
+  {% for rv in m.returnvalue %}
+
+    v = co.outputArguments[{{loop.index0}}];
+
+    {% if rv.array|length>0 %}
+      {{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
+    {% else %}
+      v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
+    {% endif %}
+  {% endfor %}
+
+
+
+	}
+
+
+{% endfor %}
+
+}
+
+
+

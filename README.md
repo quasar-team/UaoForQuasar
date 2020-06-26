@@ -1,6 +1,7 @@
 This is Uao (UA Objects), for C++ clients and for Quasar-based OPC-UA servers
 
 Author: Piotr Nikiel <piotr.nikiel@gmail.com>
+        Paris Moschovakos <paris.moschovakos@cern.ch> (Jinja2 translation)
 
 --- UA Objects ---
 
