@@ -71,7 +71,7 @@
 {% endmacro %}
 
 {% macro writePronouncement (className, variableName, dataType) %}
-    void  {{className}}::write {{variableName|capFirst}} (
+    void  {{className}}::write{{variableName|capFirst}} (
       {{dataType}}& data,
 			UaStatus                                 *out_status)
 	    {
