@@ -5,10 +5,9 @@
  *      Author: pnikiel
  */
 
-#include <UaoClientForOpcUaScaUaoExceptions.h>
 #include <sstream>
 
-namespace UaoClientForOpcUaSca
+namespace UaoClient
 {
 namespace Exceptions
 {

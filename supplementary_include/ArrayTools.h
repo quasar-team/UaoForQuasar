@@ -19,13 +19,13 @@
  *  along with Quasar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UAO_CLIENT_OPCUA_SCA_ARRAYUTILS_H_
-#define UAO_CLIENT_OPCUA_SCA_ARRAYUTILS_H_
+#ifndef UAO_CLIENT_ARRAYUTILS_H_
+#define UAO_CLIENT_ARRAYUTILS_H_
 
 #include <vector>
 #include <uavariant.h>
 
-namespace UaoClientForOpcUaSca
+namespace UaoClient
 {
 
 /* Note: Boolean and Byte converters are not done through overloading because in the UASDK they both resolve to the same primitive type (unsigned char). */
@@ -64,4 +64,4 @@ namespace ArrayTools
 }
 
 }
-#endif /* UAO_CLIENT_OPCUA_SCA_ARRAYUTILS_H_ */
+#endif /* UAO_CLIENT_ARRAYUTILS_H_ */
