@@ -23,7 +23,7 @@
 #include <ArrayTools.h>
 #include <algorithm>
 
-namespace UaoClientForOpcUaSca
+namespace UaoClient
 {
 
 namespace ArrayTools
