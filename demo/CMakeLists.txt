@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-include_directories(../include)
+include_directories(../supplementary_include)
 include_directories(../generated)
 
 set( OPCUA_TOOLKIT_PATH /opt/OpcUaToolkit-eval-1.5.5)
@@ -13,7 +13,7 @@ file(GLOB GENERATED_SRCS ../generated/*.cpp)
 
 add_executable(demo 
         demo.cpp 
-        ../src/ClientSessionFactory.cpp 
+        ../supplementary_src/ClientSessionFactory.cpp 
         ${GENERATED_SRCS}
         )
 

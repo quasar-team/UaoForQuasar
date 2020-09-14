@@ -5,13 +5,15 @@
  *      Author: pnikiel
  */
 
+#include <UaoExceptions.h>
 #include <ClientSessionFactory.h>
-
-#include <iostream>
+#include <LogIt.h>
+#include <unistd.h>
+#include <limits.h>
 
 UaClientSdk::UaSession* ClientSessionFactory::connect(const UaString& sUrl)
 {
-	UaClientSdk::UaSession* session;
+	UaClientSdk::UaSession* session (nullptr);
 
 	UaClientSdk::SessionSecurityInfo security;
 
@@ -43,4 +45,69 @@ UaClientSdk::UaSession* ClientSessionFactory::connect(const UaString& sUrl)
     }
 }
 
+UaClientSdk::UaSession* ClientSessionFactory::tryConnect(
+        const UaString& sUrl,
+        unsigned int numAttempts,
+        unsigned int delayBetweenAttemptsMs)
+{
+    if (numAttempts<1)
+        throw std::runtime_error("It is better to attempt at least once, check your arguments!");
 
+    UaClientSdk::UaSession* session(nullptr);
+    UaClientSdk::SessionSecurityInfo security;
+
+    // establishing hostname
+    char hostNameVanilla [HOST_NAME_MAX+1] = {0};
+    std::string hostName;
+    if (gethostname(hostNameVanilla, sizeof hostNameVanilla / sizeof (hostNameVanilla[0])) == 0)
+        hostName = hostNameVanilla;
+    else
+    {
+        LOG(Log::WRN) << "Didn't manage to resolve host name, will fake it!";
+        hostName = "someUnresolvedHostName";
+    }
+
+    // prep a random number to generate URI
+    unsigned int randomNumber = rand();
+
+    // preparing session connect info
+    UaClientSdk::SessionConnectInfo sessionConnectInfo;
+    sessionConnectInfo.sApplicationName = ("UaoClient@"+hostName).c_str();
+    sessionConnectInfo.sApplicationUri = sessionConnectInfo.sApplicationName + "#" + std::to_string(randomNumber).c_str();
+    sessionConnectInfo.sProductUri = "UaoClient";
+
+    // prep callback interface
+    UaClientSdk::UaSessionCallback* callback = new MyCallBack();
+
+    // connecting
+    UaStatus status;
+    session = new UaClientSdk::UaSession();
+    unsigned int connectAttempts = 1;
+    do
+    {
+        status = session->connect(
+            sUrl,
+            sessionConnectInfo,
+            security,
+            callback);
+        if (status.isGood())
+        {
+            LOG(Log::INF) << "Connected to " << sUrl.toUtf8() << " after " << connectAttempts << " connect attempts.";
+            return session;
+        }
+        else
+        {
+            if (connectAttempts < numAttempts)
+            {
+                LOG(Log::WRN) << "Will retry to connect to " << sUrl.toUtf8() << " (so far after " << connectAttempts << " attempts) in " << delayBetweenAttemptsMs << "ms";
+                usleep(delayBetweenAttemptsMs * 1000);
+            }
+        }
+        connectAttempts++;
+    }
+    while (connectAttempts < numAttempts);
+    LOG(Log::ERR) << "Failed to connect to " << sUrl.toUtf8() << " after " << connectAttempts << " attempts, bailing out.";
+    delete session;
+    delete callback;
+    throw UaoClient::Exceptions::BadStatusCode("tryConnect()", status.statusCode());
+}
