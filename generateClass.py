@@ -59,7 +59,6 @@ from Delphi import Delphi
 # kept temporarely and can be enabled by using the following switch
 XSLT_GENERATOR = False
 
-
 def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', xsltGenerator=XSLT_GENERATOR):
     output_header = os.path.join(
         uaoDirectory, 'generated', '{0}.h'.format(className))
@@ -84,7 +83,7 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', 
 
     try:
         transformDesign(
-            xsltTransformation=os.path.join(
+            transform_path=os.path.join(
                 uaoDirectory, templatesPath, 'designToClassHeader.' + transformPostfix),
             outputFile=output_header,
             requiresMerge=False,
@@ -92,7 +91,7 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', 
             additionalParam=additionalParam)
 
         transformDesign(
-            xsltTransformation=os.path.join(
+            transform_path=os.path.join(
                 uaoDirectory, templatesPath, 'designToClassBody.' + transformPostfix),
             outputFile=output_body,
             requiresMerge=False,
