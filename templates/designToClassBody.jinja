@@ -23,20 +23,20 @@
 	UaDateTime *sourceTimeStamp,
     UaDateTime *serverTimeStamp)
 	  {
-	  
+
 	    ServiceSettings   ss;
 	    UaReadValueIds    nodesToRead;
 	    UaDataValues      dataValues;
 	    UaDiagnosticInfos diagnosticInfos;
 
       UaNodeId nodeId ( UaString(m_objId.identifierString()) + UaString(".{{variableName}}"), m_objId.namespaceIndex() );
-	   
+
 	    nodesToRead.create(1);
 	    nodeId.copyTo( &nodesToRead[0].NodeId );
 	    nodesToRead[0].AttributeId = OpcUa_Attributes_Value;
-	
+
 	    dataValues.create (1);
-	    
+
 	  	UaStatus status = m_session->read(
 			ss,
 			0 /*max age*/,
@@ -52,9 +52,9 @@
 	    else
 	    {
 	        if (! UaStatus(dataValues[0].StatusCode).isGood())
-	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );	
-	    }   
-	  	
+	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );
+	    }
+
       {{dataType}} out;
 
 
@@ -65,7 +65,7 @@
         	*sourceTimeStamp = dataValues[0].SourceTimestamp;
         if (serverTimeStamp)
             *serverTimeStamp = dataValues[0].ServerTimestamp;
-	  	
+
 	  	return out;
 	    }
 {% endmacro %}
@@ -86,7 +86,7 @@
 	    nodesToWrite.create(1);
 	    nodeId.copyTo( &nodesToWrite[0].NodeId );
 	    nodesToWrite[0].AttributeId = OpcUa_Attributes_Value;
-		
+
 		UaVariant v ( data );
   {%if dataType == 'UaByteString' %}
         v.setByteString( data, false );
@@ -94,7 +94,7 @@
 
 	    dataValues.create (1);
 	    v.copyTo( &nodesToWrite[0].Value.Value );
-	    
+
 	  	UaStatus status = m_session->write(
 			ss,
 			nodesToWrite,
@@ -112,8 +112,8 @@
 		  	if (results[0] != OpcUa_Good)
 		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
 	  	}
-	
-	    }	
+
+	    }
 {% endmacro %}
 
 {% set this = designInspector.objectify_class(className) %}
@@ -137,8 +137,8 @@ namespace {{namespace}}
   m_session(session),
   m_objId (objId)
   {
-  
-  }	
+
+  }
 
 
 
@@ -172,14 +172,14 @@ namespace {{namespace}}
     {%- if not loop.last %},
     {% endif %}
   {% endfor %}
-	
+
 	)
 	{
 
   ServiceSettings serviceSettings;
   CallIn callRequest;
   CallOut co;
-		
+
   callRequest.objectId = m_objId;
   callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
 
@@ -217,7 +217,7 @@ namespace {{namespace}}
     );
   if (status.isBad())
     throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
-		
+
   {% for rv in m.returnvalue %}
 
     v = co.outputArguments[{{loop.index0}}];
@@ -225,7 +225,11 @@ namespace {{namespace}}
     {% if rv.array|length>0 %}
       {{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
     {% else %}
-      v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
+      {% if rv.get('dataType') == 'UaString' %}
+        out_{{rv.get('name')}} = v.toString();
+      {% else %}
+        v.{{oracle.data_type_to_variant_converter(rv.get('dataType'))}} (out_{{rv.get('name')}});
+      {% endif %}
     {% endif %}
   {% endfor %}
 
@@ -237,6 +241,3 @@ namespace {{namespace}}
 {% endfor %}
 
 }
-
-
-
