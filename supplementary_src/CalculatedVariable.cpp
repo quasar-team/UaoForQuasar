@@ -17,7 +17,7 @@ namespace UaoClient
 CalculatedVariable::
 CalculatedVariable
 (
-    UaSession* session,
+    UaClientSdk::UaSession* session,
     UaNodeId objId
 ) :
     m_session(session),
@@ -86,5 +86,3 @@ OpcUa_Double CalculatedVariable::readValue (
 
 
 }
-
-
