@@ -55,24 +55,15 @@ sys.path.insert(0, os.path.join(uao_path, 'Uaotilities'))
 
 from Delphi import Delphi
 
-# As of June 2020 the default engine for code generation is Jinja2. A fallback mode is
-# kept temporarely and can be enabled by using the following switch
-XSLT_GENERATOR = False
-
-def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient', xsltGenerator=XSLT_GENERATOR):
+def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient'):
     output_header = os.path.join(
         uaoDirectory, 'generated', '{0}.h'.format(className))
     output_body = os.path.join(
         uaoDirectory, 'generated', '{0}.cpp'.format(className))
 
-    if xsltGenerator:
-        print(Fore.RED + 'Using XSLT engine' + Style.RESET_ALL)
-        templatesPath = 'xslt'
-        transformPostfix = 'xslt'
-    else:
-        print(Fore.GREEN + 'Using Jinja2 engine' + Style.RESET_ALL)
-        templatesPath = 'templates'
-        transformPostfix = 'jinja'
+    print(Fore.GREEN + 'Using Jinja2 engine' + Style.RESET_ALL)
+    templatesPath = 'templates'
+    transformPostfix = 'jinja'
 
     adyton = Delphi()
 
@@ -107,9 +98,9 @@ def main():
         description='Creates OPC-UA clients for C++, see: https://github.com/quasar-team/UaoForQuasar')
     parser.add_argument('--namespace', default='UaoClient', help="C++ namespace")
     parser.add_argument('quasar_class', help="quasar class which you want to get generated")
-    
+
     args = parser.parse_args()
-    
+
     runGenerator(args.quasar_class, namespace = args.namespace)
 
 
