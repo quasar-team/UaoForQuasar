@@ -18,7 +18,7 @@ class CalculatedVariable
 public:
 
     CalculatedVariable(
-        UaSession* session,
+        UaClientSdk::UaSession* session,
         UaNodeId objId
     );
 
@@ -31,12 +31,11 @@ public:
 
 private:
 
-    UaSession  * m_session;
-    UaNodeId     m_objId;
+    UaClientSdk::UaSession* m_session;
+    UaNodeId                m_objId;
 
 };
 
 
 
 }
-
