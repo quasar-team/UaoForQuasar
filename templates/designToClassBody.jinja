@@ -191,8 +191,7 @@ namespace {{namespace}}
     callRequest.inputArguments.create( {{m.argument|length}} );
     {% for arg in m.argument %}
       {% if arg.array|length>0 %}
-        in_{{arg.get('name')}}
-        {{oracle.vector_to_uavariant_function(arg.get('dataType'))}}
+        {{oracle.vector_to_uavariant_function(arg.get('dataType'))}}(in_{{arg.get('name')}}, v);
       {% elif arg.get('dataType') == 'UaByteString' %}
 
         v.setByteString( const_cast<UaByteString&>(in_{{arg.get('name')}}), false );
