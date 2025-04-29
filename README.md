@@ -1,8 +1,8 @@
-# UaoForQuasar - UA Objects for Quasar-based OPC UA Servers
+# UaoForQuasar - UA Objects for quasar-based OPC UA Servers
 
 [![License: BSD-2-Clause](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-UaoForQuasar (UA Objects) is a code generation tool that creates type-safe OPC UA client classes in C++ based on Quasar server designs. It simplifies OPC UA client development by generating client code that matches your Quasar server's information model.
+UaoForQuasar (UA Objects) is a code generation tool that creates type-safe OPC UA client classes in C++ based on quasar server designs. It simplifies OPC UA client development by generating client code that matches your quasar server's information model.
 
 ## Overview
 
@@ -15,13 +15,13 @@ UA Objects uses a priori information from your OPC UA server's information schem
 - **Clean abstraction** - Use your OPC UA server's objects directly in client code
 
 ### Limitations
-- Client classes are specific to your Quasar application design
+- Client classes are specific to your quasar application design
 - Currently handles only single requests to OPC UA Read Service (not batch operations)
 - Requires Unified Automation SDK (UASDK)
 
 ## Requirements
 
-- **Quasar Framework** - UaoForQuasar must be deployed in a Quasar project
+- **quasar Framework** - UaoForQuasar must be deployed in a quasar project
   - Reference: https://github.com/quasar-team/quasar
 - **Unified Automation SDK** - The generated client code depends on UASDK
   - Commercial: https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
@@ -33,17 +33,17 @@ UA Objects uses a priori information from your OPC UA server's information schem
 
 ## Quick Start
 
-### 1. Add UaoForQuasar to your Quasar project
+### 1. Add UaoForQuasar to your quasar project
 
 ```bash
-# In your Quasar project directory
+# In your quasar project directory
 git submodule add https://github.com/quasar-team/UaoForQuasar.git
 git submodule update
 ```
 
 ### 2. Generate client classes
 
-Generate a client class for each Quasar class you want to access:
+Generate a client class for each quasar class you want to access:
 
 ```bash
 python UaoForQuasar/generateClass.py MyClass
