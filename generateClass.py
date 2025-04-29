@@ -73,9 +73,11 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient'):
         'readPronouncementToType': adyton.readPronouncementToType}
 
     try:
+        design_path = os.path.join(quasar_path, 'Design', 'Design.xml')
         transformDesign(
             transform_path=os.path.join(
                 uaoDirectory, templatesPath, 'designToClassHeader.' + transformPostfix),
+            designXmlPath=design_path,
             outputFile=output_header,
             requiresMerge=False,
             astyleRun=True,
@@ -84,6 +86,7 @@ def runGenerator(className, uaoDirectory='UaoForQuasar', namespace='UaoClient'):
         transformDesign(
             transform_path=os.path.join(
                 uaoDirectory, templatesPath, 'designToClassBody.' + transformPostfix),
+            designXmlPath=design_path,
             outputFile=output_body,
             requiresMerge=False,
             astyleRun=True,
