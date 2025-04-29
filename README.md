@@ -1,58 +1,106 @@
-This is Uao (UA Objects), for C++ clients and for Quasar-based OPC-UA servers
+# UaoForQuasar - UA Objects for Quasar-based OPC UA Servers
 
-Author: Piotr Nikiel <piotr.nikiel@gmail.com>
-        Paris Moschovakos <paris.moschovakos@cern.ch> (Jinja2 translation)
+[![License: BSD-2-Clause](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
---- UA Objects ---
+UaoForQuasar (UA Objects) is a code generation tool that creates type-safe OPC UA client classes in C++ based on Quasar server designs. It simplifies OPC UA client development by generating client code that matches your Quasar server's information model.
 
-UA Objects is an approach to create OPC-UA client(s) using a'priori information of 
-the OPC-UA information schema which they will serve.
-Therefore the obtained client(s) are somehow specific to the particular application.
+## Overview
 
-Pros:
-- you don't have to know how to make OPC-UA clients, the tool will generate them for you
-- you get type safety, error handling and other nice stuff 'for free'
+UA Objects uses a priori information from your OPC UA server's information schema to generate client classes that are specifically tailored to your application. This approach provides several benefits:
 
-Cons:
-- the client(s) are specific to the application (which might not be a problem, actually)
-- there might be situations in which the tool can't cover all of your requirements. 
-For example, OPC-UA permits to send multiple requests to the Read Service, but
-the current version of UaoForQuasar handles only single requests.
+### Advantages
+- **No OPC UA expertise required** - Create type-safe OPC UA clients without deep protocol knowledge
+- **Type safety** - Generated code ensures type correctness at compile time
+- **Error handling** - Built-in error handling for OPC UA operations
+- **Clean abstraction** - Use your OPC UA server's objects directly in client code
 
-Requirements:
-- the generated client depends on the UASDK API for OPC-UA clients
-It's best to use the UASDK, of course:
-https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
+### Limitations
+- Client classes are specific to your Quasar application design
+- Currently handles only single requests to OPC UA Read Service (not batch operations)
+- Requires Unified Automation SDK (UASDK)
 
-If you don't have the paid UASDK license, we tested this project with the evaluation license,
-which can help you see if the overall solution is satisfactory for you.
+## Requirements
 
+- **Quasar Framework** - UaoForQuasar must be deployed in a Quasar project
+  - Reference: https://github.com/quasar-team/quasar
+- **Unified Automation SDK** - The generated client code depends on UASDK
+  - Commercial: https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
+  - Evaluation license available for testing
+- **Python Dependencies**
+  - Jinja2 (templating engine)
+  - colorama (terminal coloring)
+  - pyuaf (OPC UA Access Framework)
 
---- How does it work ---
+## Quick Start
 
-1. You always start with a quasar-based OPC-UA server project.
-Create a quasar project, or use an existing one.
-Quasar reference: https://github.com/quasar-team/quasar
+### 1. Add UaoForQuasar to your Quasar project
 
-2. Add this project as a git submodule to your OPC-UA server:
-
+```bash
+# In your Quasar project directory
 git submodule add https://github.com/quasar-team/UaoForQuasar.git
-
 git submodule update
+```
 
-3. Generate a client class per Quasar class, e.g. for Quasar class "MyClass" (defined in quasar's Design.xml):
+### 2. Generate client classes
 
+Generate a client class for each Quasar class you want to access:
+
+```bash
 python UaoForQuasar/generateClass.py MyClass
+```
 
-The client class header and body will be places into UaoForQuasar/generated
+You can specify a C++ namespace for your generated code:
 
-4. At this stage you can use your client class. 
-Please look into demo/ directory where a simple, CMake-based project which integrated generated classes
-in some simple demo client. To compile it, go to build and then:
+```bash
+python UaoForQuasar/generateClass.py --namespace MyProject MyClass
+```
 
+Generated files will be placed in `UaoForQuasar/generated/`.
+
+### 3. Use the generated client
+
+The following example shows how to use a generated client class:
+
+```cpp
+#include <ClientSessionFactory.h>
+
+// Include your generated client class
+#include <MyClass.h>
+
+#include <uaplatformlayer.h>
+#include <iostream>
+
+int main()
+{
+    UaPlatformLayer::init();
+
+    UaClientSdk::UaSession* session = ClientSessionFactory::connect("opc.tcp://127.0.0.1:4841");
+    if (!session)
+        return -1;
+
+    MyClass myObject(session, UaNodeId("instance1", 2));
+    
+    std::cout << "Value = " << myObject.readMyVariable() << std::endl;
+    
+    return 0;
+}
+```
+
+## Demo Application
+
+A demo application is included to show how to use the generated client code:
+
+1. Navigate to the demo directory
+2. Adjust `demo.cpp` to use your generated class
+3. Modify `CMakeLists.txt` to set the correct paths for UASDK
+4. Build the demo:
+
+```bash
+cd UaoForQuasar/demo/build
 cmake ../
-
 make
+```
 
-Note that you might need to adjust demo.cpp according to the quasar class you want to talk to.
-Note that you might need to adjust CMakeLists.txt for the UASDK paths etc.
+## Contact
+
+For questions or issues, contact: paris.moschovakos@cern.ch
