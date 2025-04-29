@@ -1,7 +1,5 @@
 # UaoForQuasar - UA Objects for quasar-based OPC UA Servers
 
-[![License: BSD-2-Clause](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
-
 UaoForQuasar (UA Objects) is a code generation tool that creates type-safe OPC UA client classes in C++ based on quasar server designs. It simplifies OPC UA client development by generating client code that matches your quasar server's information model.
 
 ## Overview
