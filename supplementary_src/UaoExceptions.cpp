@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include "UaoExceptions.h"
 
 namespace UaoClient
 {
