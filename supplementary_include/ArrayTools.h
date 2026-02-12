@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <uavariant.h>
+#include <string>
 
 namespace UaoClient
 {
