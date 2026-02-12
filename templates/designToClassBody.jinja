@@ -46,13 +46,13 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
+			throw UaoClient::Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
 	    {
 	        if (! UaStatus(dataValues[0].StatusCode).isGood())
-	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );
+			throw UaoClient::Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );
 	    }
 
       {{dataType}} out;
@@ -108,9 +108,9 @@
 	  	else
 	  	{
 		  	if (status.isBad())
-		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
+		  	   throw UaoClient::Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
 		  	if (results[0] != OpcUa_Good)
-		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
+		  		throw UaoClient::Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
 	  	}
 
 	    }
@@ -119,10 +119,10 @@
 {% set this = designInspector.objectify_class(className) %}
 #include <iostream>
 #include <{{className}}.h>
-#include <uaclient/uasession.h>
+#include <uaclientcpp/uasession.h>
 #include <stdexcept>
-#include <{{namespace}}ArrayTools.h>
-#include <{{namespace}}UaoExceptions.h>
+#include <ArrayTools.h>
+#include <UaoExceptions.h>
 
 namespace {{namespace}}
 {
@@ -215,7 +215,7 @@ namespace {{namespace}}
       co
     );
   if (status.isBad())
-    throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
+    throw UaoClient::Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
 
   {% for rv in m.returnvalue %}
 

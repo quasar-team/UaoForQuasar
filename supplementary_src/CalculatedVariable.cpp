@@ -6,9 +6,9 @@
 
 #include <iostream>
 #include <CalculatedVariable.h>
-#include <uaclient/uasession.h>
+#include <uaclientcpp/uasession.h>
 #include <stdexcept>
-#include <UaoClientArrayTools.h>
+#include <ArrayTools.h>
 
 namespace UaoClient
 {
