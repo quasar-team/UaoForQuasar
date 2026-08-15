@@ -18,6 +18,7 @@
 
 #include <uaplatformlayer.h>
 #include <iostream>
+#include <unistd.h>
 
 int main()
 {
@@ -27,7 +28,7 @@ int main()
     if (!session)
         return -1;
 
-    HilariousClass hc (session, UaNodeId("hc1",2));
+    UaoClient::HilariousClass hc (session, UaNodeId("hc1",2));
     while(1)
     {
         std::cout << "value=" << hc.readHilariousVariable() << std::endl;

@@ -2,8 +2,11 @@
 
 // generated: 2019-01-17T14:41:35.144+01:00
 
+#ifndef UAO_CLIENT_CALCULATEDVARIABLE_H_
+#define UAO_CLIENT_CALCULATEDVARIABLE_H_
+
 #include <iostream>
-#include <uaclient/uaclientsdk.h>
+#include <uaclientsdk.h>
 
 namespace UaoClient
 {
@@ -39,3 +42,5 @@ private:
 
 
 }
+
+#endif

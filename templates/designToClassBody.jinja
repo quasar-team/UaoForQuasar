@@ -46,13 +46,13 @@
 			diagnosticInfos
 	  	);
 	  	if (status.isBad())
-	  	   throw Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
+	  	   throw {{'UaoClient::' if namespace != 'UaoClient' else ''}}Exceptions::BadStatusCode("OPC-UA read failed", status.statusCode());
 	    if (out_status)
 	       *out_status = dataValues[0].StatusCode;
 	    else
 	    {
 	        if (! UaStatus(dataValues[0].StatusCode).isGood())
-	        	throw Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );
+	        	throw {{'UaoClient::' if namespace != 'UaoClient' else ''}}Exceptions::BadStatusCode("OPC-UA read: variable status is not good", dataValues[0].StatusCode );
 	    }
 
       {{dataType}} out;
@@ -108,9 +108,9 @@
 	  	else
 	  	{
 		  	if (status.isBad())
-		  	   throw Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
+		  	   throw {{'UaoClient::' if namespace != 'UaoClient' else ''}}Exceptions::BadStatusCode("OPC-UA write failed", status.statusCode() );
 		  	if (results[0] != OpcUa_Good)
-		  		throw Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
+		  		throw {{'UaoClient::' if namespace != 'UaoClient' else ''}}Exceptions::BadStatusCode ("OPC-UA write failed", results[0] );
 	  	}
 
 	    }
@@ -119,10 +119,10 @@
 {% set this = designInspector.objectify_class(className) %}
 #include <iostream>
 #include <{{className}}.h>
-#include <uaclient/uasession.h>
+#include <uasession.h>
 #include <stdexcept>
-#include <{{namespace}}ArrayTools.h>
-#include <{{namespace}}UaoExceptions.h>
+#include "ArrayTools.h"
+#include "UaoExceptions.h"
 
 namespace {{namespace}}
 {
@@ -181,7 +181,7 @@ namespace {{namespace}}
   CallOut co;
 
   callRequest.objectId = m_objId;
-  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
+  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), m_objId.namespaceIndex() );
 
 
   UaVariant v;
@@ -191,7 +191,7 @@ namespace {{namespace}}
     callRequest.inputArguments.create( {{m.argument|length}} );
     {% for arg in m.argument %}
       {% if arg.array|length>0 %}
-        {{oracle.vector_to_uavariant_function(arg.get('dataType'))}}(in_{{arg.get('name')}}, v);
+        {{'UaoClient::' if namespace != 'UaoClient' else ''}}{{oracle.vector_to_uavariant_function(arg.get('dataType'))}}(in_{{arg.get('name')}}, v);
       {% elif arg.get('dataType') == 'UaByteString' %}
 
         v.setByteString( const_cast<UaByteString&>(in_{{arg.get('name')}}), false );
@@ -215,14 +215,14 @@ namespace {{namespace}}
       co
     );
   if (status.isBad())
-    throw Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
+    throw {{'UaoClient::' if namespace != 'UaoClient' else ''}}Exceptions::BadStatusCode("In OPC-UA call", status.statusCode());
 
   {% for rv in m.returnvalue %}
 
     v = co.outputArguments[{{loop.index0}}];
 
     {% if rv.array|length>0 %}
-      {{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
+      {{'UaoClient::' if namespace != 'UaoClient' else ''}}{{oracle.uavariant_to_vector_function(rv.get('dataType'))}}( v, out_{{rv.get('name')}} );
     {% else %}
       {% if rv.get('dataType') == 'UaString' %}
         out_{{rv.get('name')}} = v.toString();

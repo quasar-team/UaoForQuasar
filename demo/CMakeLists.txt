@@ -1,30 +1,51 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.16)
+project(UaoDemo LANGUAGES C CXX)
 
-include_directories(../supplementary_include)
-include_directories(../generated)
+if(NOT DEFINED QUASAR_ROOT)
+  get_filename_component(QUASAR_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
+endif()
 
-set( OPCUA_TOOLKIT_PATH /opt/OpcUaToolkit-eval-1.5.5)
+if(NOT EXISTS "${QUASAR_ROOT}/cmake/FindOpcUaToolkit.cmake")
+  message(FATAL_ERROR
+    "No FindOpcUaToolkit.cmake under ${QUASAR_ROOT}/cmake. "
+    "Deploy UaoForQuasar inside a quasar project whose FindOpcUaToolkit.cmake "
+    "provides the Client component, or point -DQUASAR_ROOT at one.")
+endif()
 
-include_directories( ${OPCUA_TOOLKIT_PATH}/include/uastack )
-include_directories( ${OPCUA_TOOLKIT_PATH}/include/uabase )
-include_directories( ${OPCUA_TOOLKIT_PATH}/include )
+list(APPEND CMAKE_MODULE_PATH "${QUASAR_ROOT}/cmake")
 
-file(GLOB GENERATED_SRCS ../generated/*.cpp)
+find_package(OpcUaToolkit REQUIRED COMPONENTS Client)
+find_package(Boost REQUIRED)
 
-add_executable(demo 
-        demo.cpp 
-        ../supplementary_src/ClientSessionFactory.cpp 
-        ${GENERATED_SRCS}
-        )
+file(GLOB UAO_GENERATED_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../generated/*.cpp")
 
-target_link_libraries(demo 
-        ${OPCUA_TOOLKIT_PATH}/lib/libuaclient.a
-        ${OPCUA_TOOLKIT_PATH}/lib/libuabase.a
-        ${OPCUA_TOOLKIT_PATH}/lib/libuapki.a
-        ${OPCUA_TOOLKIT_PATH}/lib/libuastack.so
-	${OPCUA_TOOLKIT_PATH}/lib/libxmlparser.a
-	
-        -lxml2	
-        -lpthread
-        -lcrypto
-        )
+set(UAO_SUPPLEMENTARY_SRCS
+  "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_src/ClientSessionFactory.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_src/UaoExceptions.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_src/ArrayTools.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_src/CalculatedVariable.cpp")
+
+set(UAO_LOGIT_SRCS
+  "${QUASAR_ROOT}/LogIt/src/LogIt.cpp"
+  "${QUASAR_ROOT}/LogIt/src/LogItInstance.cpp"
+  "${QUASAR_ROOT}/LogIt/src/LogLevels.cpp"
+  "${QUASAR_ROOT}/LogIt/src/LogRecord.cpp"
+  "${QUASAR_ROOT}/LogIt/src/LogSinks.cpp"
+  "${QUASAR_ROOT}/LogIt/src/ComponentAttributes.cpp"
+  "${QUASAR_ROOT}/LogIt/src/StdOutLog.cpp")
+
+add_executable(demo
+  demo.cpp
+  ${UAO_SUPPLEMENTARY_SRCS}
+  ${UAO_GENERATED_SRCS}
+  ${UAO_LOGIT_SRCS})
+
+target_include_directories(demo PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../generated"
+  "${QUASAR_ROOT}/LogIt/include"
+  ${Boost_INCLUDE_DIRS})
+
+target_compile_definitions(demo PRIVATE LOGIT_BACKEND_STDOUTLOG)
+
+target_link_libraries(demo PRIVATE OpcUaToolkit::Client)

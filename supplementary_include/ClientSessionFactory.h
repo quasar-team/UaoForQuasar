@@ -8,7 +8,7 @@
 #ifndef DEVICE_INCLUDE_CLIENTSESSIONFACTORY_H_
 #define DEVICE_INCLUDE_CLIENTSESSIONFACTORY_H_
 
-#include <uaclient/uasession.h>
+#include <uasession.h>
 
 
 class MyCallBack : public UaClientSdk::UaSessionCallback
