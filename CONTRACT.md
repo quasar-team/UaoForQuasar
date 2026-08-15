@@ -40,8 +40,8 @@ Value, status and array types:
 | `UaByteArray`, `UaStringArray` | array carriers in `ArrayTools` |
 | `UaPlatformLayer` | `init()` in the demo |
 
-Constants (the four): `OpcUa_Attributes_Value`, `OpcUa_TimestampsToReturn_Both`,
-`OpcUa_Good`, `OpcUa_False`.
+Constants (the three): `OpcUa_Attributes_Value`, `OpcUa_TimestampsToReturn_Both`,
+`OpcUa_Good`.
 
 Primitive typedefs: `OpcUa_StatusCode`, `OpcUa_Boolean`, `OpcUa_Byte`,
 `OpcUa_SByte`, `OpcUa_Int16`, `OpcUa_UInt16`, `OpcUa_Int32`, `OpcUa_UInt32`,
@@ -65,7 +65,7 @@ Primitive typedefs: `OpcUa_StatusCode`, `OpcUa_Boolean`, `OpcUa_Byte`,
 | `OpcUa_UInt64` | `setUInt64` |
 | `OpcUa_Boolean` | `setBool` |
 | `UaString` | `setString` |
-| `UaByteString` | special-cased to `setByteString(data, OpcUa_False)` |
+| `UaByteString` | special-cased to `setByteString(data, false)` |
 
 `Oracle.DataTypeToVariantConverter` (read and method output path, emitted via
 `Delphi.readPronouncementToType`):
@@ -94,6 +94,15 @@ array members `setBoolArray`, `setByteArray`, `setSByteArray`, `setInt16Array`,
 `setUInt16Array`, `setInt32Array`, `setUInt32Array`, `setInt64Array`,
 `setUInt64Array`, `setFloatArray`, `setDoubleArray`, `setStringArray` and their
 `to*Array` counterparts.
+
+## Known limitation
+
+Generated method calls build the methodId as
+`UaNodeId(<objectId>.<methodName>, 2)` with the namespace index fixed at 2,
+while reads and writes take the namespace index from the object's NodeId. An
+object living in any other namespace gets its methods addressed in namespace 2.
+This predates the redesign and is frozen as-is; changing it alters generated
+bodies and needs its own regeneration round.
 
 ## Contract growth
 
