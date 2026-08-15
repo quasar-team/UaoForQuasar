@@ -181,7 +181,7 @@ namespace {{namespace}}
   CallOut co;
 
   callRequest.objectId = m_objId;
-  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), 2 );
+  callRequest.methodId = UaNodeId( UaString(m_objId.identifierString()) + UaString(".{{m.get('name')}}"), m_objId.namespaceIndex() );
 
 
   UaVariant v;
