@@ -27,7 +27,7 @@ int main()
     if (!session)
         return -1;
 
-    HilariousClass hc (session, UaNodeId("hc1",2));
+    UaoClient::HilariousClass hc (session, UaNodeId("hc1",2));
     while(1)
     {
         std::cout << "value=" << hc.readHilariousVariable() << std::endl;

@@ -119,10 +119,10 @@
 {% set this = designInspector.objectify_class(className) %}
 #include <iostream>
 #include <{{className}}.h>
-#include <uaclient/uasession.h>
+#include <uasession.h>
 #include <stdexcept>
-#include <{{namespace}}ArrayTools.h>
-#include <{{namespace}}UaoExceptions.h>
+#include "ArrayTools.h"
+#include "UaoExceptions.h"
 
 namespace {{namespace}}
 {

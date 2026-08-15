@@ -23,6 +23,7 @@
 #define UAO_CLIENT_ARRAYUTILS_H_
 
 #include <vector>
+#include <string>
 #include <uavariant.h>
 
 namespace UaoClient
