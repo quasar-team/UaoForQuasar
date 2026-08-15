@@ -15,15 +15,16 @@ UA Objects uses a priori information from your OPC UA server's information schem
 ### Limitations
 - Client classes are specific to your quasar application design
 - Currently handles only single requests to OPC UA Read Service (not batch operations)
-- Requires Unified Automation SDK (UASDK)
+- Requires an OPC UA client toolkit: Unified Automation SDK, or experimentally open62541-compat (see CONTRACT.md)
 
 ## Requirements
 
 - **quasar Framework** - UaoForQuasar must be deployed in a quasar project
   - Reference: https://github.com/quasar-team/quasar
-- **Unified Automation SDK** - The generated client code depends on UASDK
+- **OPC UA client toolkit** - Unified Automation SDK (any supported tree, see CONTRACT.md)
   - Commercial: https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
   - Evaluation license available for testing
+  - open62541-compat is an experimental alternative, see the caveats in CONTRACT.md
 - **Python Dependencies**
   - Jinja2 (templating engine)
   - colorama (terminal coloring)
@@ -76,7 +77,7 @@ int main()
     if (!session)
         return -1;
 
-    MyClass myObject(session, UaNodeId("instance1", 2));
+    UaoClient::MyClass myObject(session, UaNodeId("instance1", 2));
     
     std::cout << "Value = " << myObject.readMyVariable() << std::endl;
     
@@ -90,14 +91,18 @@ A demo application is included to show how to use the generated client code:
 
 1. Navigate to the demo directory
 2. Adjust `demo.cpp` to use your generated class
-3. Modify `CMakeLists.txt` to set the correct paths for UASDK
-4. Build the demo:
+3. Build the demo; the toolkit is discovered through the Client component of
+   quasar's `FindOpcUaToolkit.cmake`, so no paths need editing:
 
 ```bash
-cd UaoForQuasar/demo/build
-cmake ../
+cd UaoForQuasar/demo
+mkdir -p build && cd build
+cmake -DOPCUA_TOOLKIT_PATH=/path/to/toolkit ../
 make
 ```
+
+Leave out `-DOPCUA_TOOLKIT_PATH` to let discovery try the standard install
+locations.
 
 ## Contact
 
