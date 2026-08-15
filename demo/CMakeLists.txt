@@ -15,6 +15,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${QUASAR_ROOT}/cmake")
 
 find_package(OpcUaToolkit REQUIRED COMPONENTS Client)
+find_package(Boost REQUIRED)
 
 file(GLOB UAO_GENERATED_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../generated/*.cpp")
 
@@ -42,7 +43,8 @@ add_executable(demo
 target_include_directories(demo PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/../supplementary_include"
   "${CMAKE_CURRENT_SOURCE_DIR}/../generated"
-  "${QUASAR_ROOT}/LogIt/include")
+  "${QUASAR_ROOT}/LogIt/include"
+  ${Boost_INCLUDE_DIRS})
 
 target_compile_definitions(demo PRIVATE LOGIT_BACKEND_STDOUTLOG)
 
