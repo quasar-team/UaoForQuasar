@@ -21,7 +21,7 @@ UA Objects uses a priori information from your OPC UA server's information schem
 
 - **quasar Framework** - UaoForQuasar must be deployed in a quasar project
   - Reference: https://github.com/quasar-team/quasar
-- **OPC UA client toolkit** - Unified Automation SDK (any supported tree, see CONTRACT.md)
+- **OPC UA client toolkit** - Unified Automation SDK 1.8.9 or 2.x (supported matrix in CONTRACT.md; earlier 1.x trees are discovered on a best-effort basis)
   - Commercial: https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
   - Evaluation license available for testing
   - open62541-compat is an experimental alternative, see the caveats in CONTRACT.md

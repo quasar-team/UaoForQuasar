@@ -10,6 +10,14 @@ supplies the include directories through the Client component of quasar's
 `cmake/FindOpcUaToolkit.cmake`, which also computes the link closure. No toolkit
 path, library name or include directory appears anywhere in this repository.
 
+## Supported matrix
+
+The supported toolkits are UA SDK 1.8.9 and the 2.x line (verified on 2.0.2 and
+2.0.3), plus the experimental open62541-compat row described below. Earlier 1.x
+trees (1.5.5 through 1.7.9) are served by the same artifact-driven discovery and
+were part of the evidence that froze this surface, but they are not support
+gates: discovery reports them informationally and nothing is promised for them.
+
 ## Half 1: SDK symbols used by templates and supplementary C++
 
 Session services (namespace `UaClientSdk`):
@@ -94,15 +102,6 @@ array members `setBoolArray`, `setByteArray`, `setSByteArray`, `setInt16Array`,
 `setUInt16Array`, `setInt32Array`, `setUInt32Array`, `setInt64Array`,
 `setUInt64Array`, `setFloatArray`, `setDoubleArray`, `setStringArray` and their
 `to*Array` counterparts.
-
-## Known limitation
-
-Generated method calls build the methodId as
-`UaNodeId(<objectId>.<methodName>, 2)` with the namespace index fixed at 2,
-while reads and writes take the namespace index from the object's NodeId. An
-object living in any other namespace gets its methods addressed in namespace 2.
-This predates the redesign and is frozen as-is; changing it alters generated
-bodies and needs its own regeneration round.
 
 ## Contract growth
 
