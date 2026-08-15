@@ -8,7 +8,8 @@ SDK version or backend conditionals, and include every SDK header prefix-free
 `#include <uavariant.h>`), matching the SDK's own internal convention. The build
 supplies the include directories through the Client component of quasar's
 `cmake/FindOpcUaToolkit.cmake`, which also computes the link closure. No toolkit
-path, library name or include directory appears anywhere in this repository.
+path, library name or include directory appears in the templates, the
+supplementary C++ or the demo build.
 
 ## Supported matrix
 
