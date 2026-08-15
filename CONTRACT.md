@@ -131,7 +131,9 @@ caveats:
 - `ClientSessionFactory::tryConnect` polling works: it relies on the `connect`
   return status only.
 - As of open62541-compat v1.5.12 `UaSessionCallback` is an empty stub that does
-  not declare `connectionStatusChanged`, so `MyCallBack`'s `override` does not
-  compile there. The compat row goes green once compat declares the pure
-  virtual; that one-line growth is the only compat change this contract needs.
+  not declare `connectionStatusChanged`, so `MyCallBack` declares the handler
+  without `override`. Against a UA SDK it still implements the pure virtual,
+  and signature drift stays a compile error at the `new MyCallBack()` site,
+  which fails while `UaSessionCallback` remains abstract. Against compat the
+  handler exists but is never invoked.
 - No subscriptions and no security growth are planned for the compat row.

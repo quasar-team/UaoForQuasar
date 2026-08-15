@@ -13,7 +13,7 @@
 
 class MyCallBack : public UaClientSdk::UaSessionCallback
 {
-	virtual void connectionStatusChanged(OpcUa_UInt32, UaClientSdk::UaClient::ServerStatus) override
+	virtual void connectionStatusChanged(OpcUa_UInt32, UaClientSdk::UaClient::ServerStatus)
 	{
 		// from here print about connection status
 	}
