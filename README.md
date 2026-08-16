@@ -15,16 +15,16 @@ UA Objects uses a priori information from your OPC UA server's information schem
 ### Limitations
 - Client classes are specific to your quasar application design
 - Currently handles only single requests to OPC UA Read Service (not batch operations)
-- Requires an OPC UA client toolkit: Unified Automation SDK, or experimentally open62541-compat (see CONTRACT.md)
+- Requires an OPC UA client toolkit: Unified Automation SDK, or experimentally open62541-compat
 
 ## Requirements
 
 - **quasar Framework** - UaoForQuasar must be deployed in a quasar project
   - Reference: https://github.com/quasar-team/quasar
-- **OPC UA client toolkit** - Unified Automation SDK (supported matrix in CONTRACT.md; earlier 1.x trees are discovered on a best-effort basis)
+- **OPC UA client toolkit** - Unified Automation SDK (supported 1.8.9 and 2.x; earlier 1.x trees are discovered on a best-effort basis)
   - Commercial: https://www.unified-automation.com/products/server-sdk/c-ua-server-sdk.html
   - Evaluation license available for testing
-  - open62541-compat is an experimental alternative, see the caveats in CONTRACT.md
+  - open62541-compat is an experimental alternative
 - **Python Dependencies**
   - Jinja2 (templating engine)
   - colorama (terminal coloring)
